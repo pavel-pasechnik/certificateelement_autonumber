@@ -82,5 +82,12 @@ class observer
 		$code = str_replace('№', $serial, $prefix);
 
 		$DB->set_field('customcert_issues', 'code', $code, ['id' => $issueid]);
+
+		// We save the number in our own plugin table.
+		$record = new \stdClass();
+		$record->issueid = $issueid;
+		$record->number = $code;
+		$record->timecreated = time();
+		$DB->insert_record('local_autonumber', $record);
 	}
 }
