@@ -1,14 +1,13 @@
-name: Build, Test & Release Moodle Plugin
+name: Test & Release Moodle Plugin
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
 
 jobs:
-  test-and-release:
+  test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:13
@@ -52,14 +51,45 @@ jobs:
       - name: Run PHPUnit
         run: moodle-plugin-ci phpunit
 
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set version and tag (incremental)
+        id: version
+        run: |
+          # Получаем последний тег
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+
+          # Извлекаем номер и увеличиваем патч
+          BASE=${LAST_TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
+          PATCH=$((PATCH + 1))
+          VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "➡️ Creating release $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git tag -a "$VERSION" -m "Automated release $VERSION"
+          git push origin "$VERSION"
+
       - name: Prepare ZIP archive
         run: |
-          zip -r local_autonumber-${{ github.ref_name }}.zip . \
+          zip -r local_autonumber-${{ env.VERSION }}.zip . \
             -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: local_autonumber-${{ github.ref_name }}.zip
+          files: local_autonumber-${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
