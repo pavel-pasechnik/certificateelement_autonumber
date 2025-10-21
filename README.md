@@ -3,6 +3,7 @@
 [![Moodle](https://img.shields.io/badge/Moodle-4.0--4.5-orange?logo=moodle&style=flat-square)](https://moodle.org/plugins/local_autonumber)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/pavel-pasechnik/autonumber?label=Download&style=flat-square)](https://github.com/pavel-pasechnik/autonumber/releases/latest)
+[![Build Status](https://github.com/pavel-pasechnik/autonumber/actions/workflows/release.yml/badge.svg)](https://github.com/pavel-pasechnik/autonumber/actions/workflows/release.yml)
 [![Maintainer](https://img.shields.io/badge/Maintainer-Pavel%20Pasechnik-blue?style=flat-square)](https://github.com/pavel-pasechnik)
 
 **Component:** `local_autonumber`  
