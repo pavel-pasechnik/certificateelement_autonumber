@@ -16,23 +16,23 @@
 
 The **Local AutoNumber** plugin automatically assigns **series and sequential registration numbers** to certificates issued through Moodle’s official **Certificate management system** (`tool_certificate` or `mod_customcert`).
 
+> ⚠️ **Dependency:** Requires the official Moodle Certificate Management Plugin (`tool_certificate` or `mod_coursecertificate`).
+
 It provides flexible numbering schemes and full integration with the verification system.
 
-| Mode           | Description                        | Example                   |
-| -------------- | ---------------------------------- | ------------------------- |
-| Category       | Based on course category shortname | `ШБ25-2025-000123`        |
-| Group          | Based on user group shortname      | `БВ25-4-2025-000123`      |
-| Course + Group | Combined pattern                   | `TTC1-БВ25-4-2025-000123` |
-| Manual         | Fully custom template              | `КДА-2025-№000001`        |
+| Mode           | Description                        | Example              |
+| -------------- | ---------------------------------- | -------------------- |
+| Category       | Based on course category shortname | `ШБ25-000123`        |
+| Group          | Based on user group shortname      | `БВ25-4-000123`      |
+| Course + Group | Combined pattern                   | `TTC1-БВ25-4-000123` |
+| Manual         | Fully custom template              | `КДАСК-№000001`      |
 
 ---
 
 ## 🧩 Key Features
 
 - Automatic assignment of series and sequential numbers
-- Year reference based on the certificate issue date
 - Integration with Moodle core verification (`view.php?code=...`)
-- Optional verification by public page `/local/autonumber/verify_hook.php?num=...`
 - Integration with _My certificates_ page (custom renderer)
 - CLI utility for generating numbers for imported certificates
 - Multilingual interface (English, Ukrainian, Russian)
@@ -58,7 +58,7 @@ php local/autonumber/cli/generate_for_existing.php
 ```
 
 The script automatically generates numbers based on the issue date and ID  
-(e.g., `КДА-2024-№000101`) and saves them in the plugin table `mdl_local_autonumber`.
+(e.g., `КДАСК-№000101`) and saves them in the plugin table `mdl_local_autonumber`.
 
 ---
 
@@ -68,10 +68,8 @@ Issued certificates can be verified by:
 
 1. Standard Moodle page  
    `/admin/tool/certificate/view.php?code=XYZ123`
-2. Custom friendly verifier page  
-   `/local/autonumber/verify_hook.php?num=КДА-2025-№000001`
 
-Both pages show verified data such as course, user, and issue date.
+This page shows verified data such as course, user, and issue date.
 
 ---
 

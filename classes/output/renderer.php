@@ -15,8 +15,7 @@ class renderer extends \plugin_renderer_base
 			get_string('name'),
 			get_string('course'),
 			get_string('date'),
-			get_string('certnumber', 'local_autonumber'),
-			'Код Moodle'
+			get_string('certnumber', 'local_autonumber')
 		];
 
 		foreach ($certificates as $c) {
@@ -25,8 +24,7 @@ class renderer extends \plugin_renderer_base
 				format_string($c->name ?? '-'),
 				format_string($c->coursename ?? '-'),
 				userdate($c->timecreated ?? time()),
-				$number ?: '—',
-				$c->code ?? ''
+				$number ?: '—'
 			];
 		}
 

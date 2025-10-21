@@ -23,7 +23,7 @@ if ($hassiteconfig) {
 		'local_autonumber/seriesprefix',
 		get_string('seriesprefix', 'local_autonumber'),
 		get_string('seriesprefix_desc', 'local_autonumber'),
-		'KDA-year-№'
+		'КДАСК-№'
 	));
 
 	$ADMIN->add('localplugins', $settings);

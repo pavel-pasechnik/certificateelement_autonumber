@@ -17,7 +17,6 @@ class observer
 
 		// We determine the mode from the settings
 		$mode = get_config('local_autonumber', 'mode') ?: 'manual';
-		$year = date('Y', $issue->timecreated);
 		$prefix = '';
 
 		switch ($mode) {
@@ -27,7 +26,7 @@ class observer
                     FROM {course} c
                     JOIN {course_categories} cc ON cc.id = c.category
                     WHERE c.id = ?", [$issue->courseid]);
-				$prefix = $category . '-' . $year . '-№';
+				$prefix = $category . '-№';
 				break;
 
 			case 'group':
@@ -37,7 +36,7 @@ class observer
                     JOIN {groups_members} gm ON gm.groupid = g.id
                     WHERE gm.userid = ? AND g.courseid = ?
                     LIMIT 1", [$issue->userid, $issue->courseid]);
-				$prefix = ($group ?: 'GROUP') . '-' . $year . '-№';
+				$prefix = ($group ?: 'GROUP') . '-№';
 				break;
 
 			case 'coursegroup':
@@ -48,13 +47,12 @@ class observer
                     JOIN {groups_members} gm ON gm.groupid = g.id
                     WHERE gm.userid = ? AND g.courseid = ?
                     LIMIT 1", [$issue->userid, $issue->courseid]);
-				$prefix = $course . '-' . ($group ?: 'GROUP') . '-' . $year . '-№';
+				$prefix = $course . '-' . ($group ?: 'GROUP') . '-№';
 				break;
 
 			case 'manual':
 			default:
-				$prefix = get_config('local_autonumber', 'seriesprefix') ?: 'KDASK-year-№';
-				$prefix = str_replace('year', $year, $prefix);
+				$prefix = get_config('local_autonumber', 'seriesprefix') ?: 'КДАСК-№';
 				break;
 		}
 
@@ -81,7 +79,7 @@ class observer
 		// Final code
 		$code = str_replace('№', $serial, $prefix);
 
-		$DB->set_field('customcert_issues', 'code', $code, ['id' => $issueid]);
+		// The certificate is verified using the standard functionality of the coursecertificate plugin.
 
 		// We save the number in our own plugin table.
 		$record = new \stdClass();
