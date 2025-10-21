@@ -47,7 +47,7 @@ jobs:
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
           psql -U moodle -h localhost -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
-          moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main
+          moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main --no-init
 
       - name: Run PHPCS (Code style)
         run: moodle-plugin-ci phpcs
