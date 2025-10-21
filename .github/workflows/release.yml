@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PATH: ${{ github.workspace }}/ci/bin:/usr/local/bin:/usr/bin:/bin
     services:
       postgres:
         image: postgres:15
