@@ -43,6 +43,7 @@ jobs:
       - name: Set up Moodle Plugin CI
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
+          psql -U moodle -h localhost -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
           moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main
 
       - name: Run PHPCS (Code style)
