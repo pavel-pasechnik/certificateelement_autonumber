@@ -41,6 +41,8 @@ jobs:
         run: composer create-project -n --no-dev moodlehq/moodle-plugin-ci ci ^4
 
       - name: Set up Moodle Plugin CI
+        env:
+          PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
           psql -U moodle -h localhost -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
