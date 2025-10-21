@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:13
+        image: postgres:15
         env:
           POSTGRES_USER: moodle
           POSTGRES_PASSWORD: moodle
@@ -34,6 +34,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          ini-values: max_input_vars=5000
           extensions: pgsql, mysqli, zip, intl, gd, curl, xmlrpc, soap
           coverage: none
 
