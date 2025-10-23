@@ -25,9 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_autonumber';   // Unique plugin identifier.
+$plugin->component = 'local_autonumber';   // Unique Plugin Identifier.
 $plugin->version   = 2025102000;           // YearMonthDayVersion.
-$plugin->requires  = 2022041900;           // Minimum Moodle version (4.0+).
-$plugin->release   = '1.0';
+$plugin->requires  = 2022041900;           // Minimum Moodle Version (4.0+).
+$plugin->release   = '1.0.9';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->cron      = 0;
+
+// Add dependency.
+$plugin->dependencies = [
+    'mod_coursecertificate' => 2024050100, // Minimum version of coursecertificate.
+];

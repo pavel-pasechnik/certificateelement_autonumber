@@ -31,3 +31,5 @@ $string['option_coursegroup'] = 'Course + group';
 $string['option_manual'] = 'Manual template';
 $string['seriesprefix'] = 'Manual series template';
 $string['seriesprefix_desc'] = 'Use placeholders: "year" for year, "№" for serial number. Example: KDASK-№';
+$string['certnumber'] = 'Certificate number';
+$string['certnumber_desc'] = 'Displays the automatically generated certificate number (from the local_autonumber plugin).';

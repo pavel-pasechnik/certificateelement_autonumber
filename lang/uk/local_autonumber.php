@@ -31,3 +31,5 @@ $string['option_coursegroup'] = 'Курс + група';
 $string['option_manual'] = 'Ручний шаблон';
 $string['seriesprefix'] = 'Шаблон серії сертифікатів';
 $string['seriesprefix_desc'] = 'Використовуйте заповнювачі: «рік» для року, «№» для серійного номера. Приклад: КДАСК-№';
+$string['certnumber'] = 'Номер сертифіката';
+$string['certnumber_desc'] = 'Відображає автоматично згенерований номер сертифіката (з плагіна local_autonumber).';
