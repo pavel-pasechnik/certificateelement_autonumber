@@ -19,15 +19,15 @@ namespace local_autonumber\local\dynamicfield;
 use mod_coursecertificate\local\dynamicfield\base_dynamic_field;
 
 /**
- * Dynamic field for displaying autonumber certificate number.
+ * Dynamic field: Certificate number.
  *
  * @package   local_autonumber
  * @copyright 2025 Павел Пасечник
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class number extends base_dynamic_field {
+class certnumber extends base_dynamic_field {
     /**
-     * Название поля, которое будет отображаться в редакторе сертификата.
+     * Returns the field name shown in the certificate editor.
      *
      * @return string
      */
@@ -36,7 +36,7 @@ class number extends base_dynamic_field {
     }
 
     /**
-     * Описание поля.
+     * Returns the field description.
      *
      * @return string
      */
@@ -45,15 +45,14 @@ class number extends base_dynamic_field {
     }
 
     /**
-     * Получает значение для вывода в сертификате.
+     * Fetches the stored certificate number for the given issue.
      *
-     * @param object $issue
-     * @param object $user
+     * @param object $issue Issue record provided by course certificate module.
+     * @param object $user User record (unused, required by interface).
      * @return string
      */
     public function get_value($issue, $user): string {
         global $DB;
-        $number = $DB->get_field('local_autonumber', 'number', ['issueid' => $issue->id]);
-        return $number ?: '';
+        return $DB->get_field('local_autonumber', 'number', ['issueid' => $issue->id]) ?? '';
     }
 }
