@@ -61,7 +61,9 @@ jobs:
           moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main --no-init
           # Move plugin into correct Moodle subplugin folder
           mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ./ moodle/admin/tool/certificate/element/autonumber/
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
+          cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
+          rm -rf admin
 
       - name: Initialise PHPUnit environment
         run: |
