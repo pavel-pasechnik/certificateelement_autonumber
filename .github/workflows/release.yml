@@ -41,7 +41,7 @@ jobs:
           export PATH="$(pwd)/ci/bin:$PATH"
           echo "$PATH"
 
-      - name: Prepare Moodle and move plugin
+      - name: Prepare Moodle and install dependencies
         env:
           PGPASSWORD: moodle
         run: |
@@ -52,7 +52,7 @@ jobs:
           # Очистка перед установкой
           rm -rf moodle
 
-          # Устанавливаем Moodle сначала
+          # 1️⃣ Полная установка Moodle
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -62,21 +62,24 @@ jobs:
             --db-name=moodle \
             --branch=main
 
-          # После установки добавляем зависимости Moodle Workplace
+          # 2️⃣ Установка зависимых плагинов Workplace
           git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/moodleworkplace/moodle-tool_certificate.git \
+            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
             moodle/admin/tool/certificate
 
           git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/moodleworkplace/moodle-mod_coursecertificate.git \
+            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
             moodle/mod/coursecertificate
 
-          # Перенос сабплагина в структуру tool_certificate
+          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
+
+          # 3️⃣ Добавляем сабплагин autonumber
           mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ \
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ./ \
             moodle/admin/tool/certificate/element/autonumber/
-          cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
-          rm -rf admin
+
+          # 4️⃣ Инициализация сабплагина
+          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
 
       - name: Initialise PHPUnit environment
         run: |
