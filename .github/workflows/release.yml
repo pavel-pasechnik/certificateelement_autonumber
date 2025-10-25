@@ -52,7 +52,24 @@ jobs:
           # Очистка перед установкой
           rm -rf moodle
 
-          # 1️⃣ Полная установка Moodle
+          # 1️⃣ Клонируем зависимости Workplace ДО установки Moodle
+          mkdir -p moodle/admin/tool
+          mkdir -p moodle/mod
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
+            moodle/admin/tool/certificate
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
+            moodle/mod/coursecertificate
+
+          # Добавляем сабплагин autonumber
+          mkdir -p moodle/admin/tool/certificate/element/autonumber
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ./ \
+            moodle/admin/tool/certificate/element/autonumber/
+
+          # 2️⃣ Теперь устанавливаем Moodle со всеми плагинами
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -62,23 +79,7 @@ jobs:
             --db-name=moodle \
             --branch=main
 
-          # 2️⃣ Установка зависимых плагинов Workplace
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
-            moodle/admin/tool/certificate
-
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
-            moodle/mod/coursecertificate
-
-          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
-
-          # 3️⃣ Добавляем сабплагин autonumber
-          mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ./ \
-            moodle/admin/tool/certificate/element/autonumber/
-
-          # 4️⃣ Инициализация сабплагина
+          # 3️⃣ Финальная инициализация сабплагина
           php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
 
       - name: Initialise PHPUnit environment
