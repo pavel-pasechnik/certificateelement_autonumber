@@ -97,7 +97,16 @@ class element extends \tool_certificate\element {
             case 'manual':
                 return get_config('certificateelement_autonumber', 'manualseries') ?: 'SER';
             default:
-                return "C{$courseid}";
+                $shortname = $DB->get_field('course', 'shortname', ['id' => $courseid]) ?? '';
+                $letters = implode(
+                    '',
+                    array_map(
+                        static fn($word) => mb_strtoupper(mb_substr($word, 0, 1)),
+                        preg_split('/\s+/', $shortname)
+                    )
+                );
+                $series = preg_replace("/[^A-Z']/u", '', $letters);
+                return $series ?: "C{$courseid}";
         }
     }
 

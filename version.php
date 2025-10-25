@@ -26,14 +26,15 @@ defined('MOODLE_INTERNAL') || die();
 
 // Plugin metadata.
 $plugin->component = 'certificateelement_autonumber';
-$plugin->type      = 'certificateelement';     // Обязательно для корректной установки.
+$plugin->subplugintype = 'certificateelement';
+$plugin->subpluginof   = 'tool_certificate';
 $plugin->version   = 2025102307;              // YYYYMMDDXX.
 $plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
 $plugin->release   = '1.0.7';
 $plugin->maturity  = MATURITY_STABLE;
 
-// Dependencies.
 $plugin->dependencies = [
+    // Declare dependencies for correct installation order.
     'tool_certificate' => 2024042200, // Core Workplace certificate tool.
     'mod_coursecertificate' => 2024042200, // Course certificate module.
 ];
