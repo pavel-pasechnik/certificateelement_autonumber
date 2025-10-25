@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 // Plugin metadata.
 $plugin->component = 'certificateelement_autonumber';
-$plugin->subplugintype = 'certificateelement';
 $plugin->subpluginof   = 'tool_certificate';
 $plugin->version   = 2025102307;              // YYYYMMDDXX.
 $plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
