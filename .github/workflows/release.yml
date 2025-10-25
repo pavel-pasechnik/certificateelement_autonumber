@@ -46,6 +46,8 @@ jobs:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
+          # Очистка базы, если уже существует
+          psql -U moodle -h 127.0.0.1 -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
 
           # Очистка перед установкой
           rm -rf moodle
