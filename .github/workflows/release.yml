@@ -48,19 +48,17 @@ jobs:
 
       - name: Install Moodle with dependencies
         run: |
-          # Клонируем зависимости Moodle Workplace (официальные репозитории)
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git tool_certificate
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git mod_coursecertificate
+          # Клонируем зависимости Moodle Workplace в правильные каталоги Moodle
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git moodle/admin/tool/certificate
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
 
-          # Устанавливаем Moodle с локальными путями зависимостей
+          # Устанавливаем Moodle с уже добавленными зависимостями
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
             --db-user=postgres \
             --db-pass=postgres \
-            --db-name=moodle \
-            --extra-plugins=tool_certificate \
-            --extra-plugins=mod_coursecertificate
+            --db-name=moodle
         env:
           DB: pgsql
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
