@@ -17,7 +17,7 @@
 /**
  * Form fragment for certificate element settings.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2024 Pavel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

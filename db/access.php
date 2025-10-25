@@ -17,7 +17,7 @@
 /**
  * Capability definitions for certificateelement_autonumber.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Павел
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

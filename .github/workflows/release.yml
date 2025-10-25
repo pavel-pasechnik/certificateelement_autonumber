@@ -39,6 +39,7 @@ jobs:
           ini-values: max_input_vars=5000
           extensions: pgsql, mysqli, zip, intl, gd, curl, xmlrpc, soap
           coverage: none
+          tools: composer
 
       - name: Install Moodle Plugin CI
         run: composer create-project -n --no-dev moodlehq/moodle-plugin-ci ci ^4
@@ -46,17 +47,21 @@ jobs:
       - name: Configure locale
         run: |
           sudo apt-get update
-          sudo apt-get install -y locales
+          sudo apt-get install -y locales rsync
           sudo locale-gen en_AU.UTF-8
           sudo update-locale LANG=en_AU.UTF-8
 
-      - name: Set up Moodle Plugin CI
+      - name: Prepare Moodle and move plugin
         env:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
           psql -U moodle -h localhost -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
+          # Create Moodle structure
           moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main --no-init
+          # Move plugin into correct Moodle subplugin folder
+          mkdir -p moodle/admin/tool/certificate/element/autonumber
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ./ moodle/admin/tool/certificate/element/autonumber/
 
       - name: Initialise PHPUnit environment
         run: |
@@ -81,10 +86,10 @@ jobs:
       - name: Set version and tag (incremental)
         id: version
         run: |
-          # Получаем последний тег
+          # Get the last tag
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
 
-          # Извлекаем номер и увеличиваем патч
+          # Increment patch version
           BASE=${LAST_TAG#v}
           IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
           PATCH=$((PATCH + 1))
@@ -101,15 +106,15 @@ jobs:
 
       - name: Prepare ZIP archive
         run: |
-          zip -r local_autonumber-${{ env.VERSION }}.zip . \
-            -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*"
+          zip -r certificateelement_autonumber-${{ env.VERSION }}.zip . \
+            -x "*.git*" "*.DS_Store*" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}
-          name: "Release ${{ env.VERSION }}"
-          files: local_autonumber-${{ env.VERSION }}.zip
+          name: "Certificate Element Autonumber ${{ env.VERSION }}"
+          files: certificateelement_autonumber-${{ env.VERSION }}.zip
           draft: false
           prerelease: false
         env:

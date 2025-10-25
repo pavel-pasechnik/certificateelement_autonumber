@@ -17,18 +17,18 @@
 /**
  * Admin page to recalculate certificate numbers/series.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2024 Pavel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(new moodle_url('/admin/tool/certificateelement_autonumber/recalculate.php'));
+$PAGE->set_url(new moodle_url('/admin/tool/certificate/element/autonumber/recalculate.php'));
 $PAGE->set_title(get_string('recalculate_numbers', 'certificateelement_autonumber'));
 $PAGE->set_heading(get_string('pluginname', 'certificateelement_autonumber'));
 

@@ -73,9 +73,9 @@ Each issued certificate gets a new number consistent with the current numbering 
 
 | Language  | File Path                                      | Status |
 | --------- | ---------------------------------------------- | ------ |
-| English   | `lang/en/tool_certificateelement_autonumber.php` | ✅     |
-| Ukrainian | `lang/uk/tool_certificateelement_autonumber.php` | ✅     |
-| Russian   | `lang/ru/tool_certificateelement_autonumber.php` | ✅     |
+| English   | `lang/en/certificateelement_autonumber.php` | ✅     |
+| Ukrainian | `lang/uk/certificateelement_autonumber.php` | ✅     |
+| Russian   | `lang/ru/certificateelement_autonumber.php` | ✅     |
 
 ---
 
