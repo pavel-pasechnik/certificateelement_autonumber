@@ -54,7 +54,8 @@ jobs:
             --db-user=postgres \
             --db-pass=postgres \
             --db-name=moodle \
-            --extra-plugins="https://github.com/pavel-pasechnik/moodle-tool_certificate.git@MOODLE_400_STABLE,https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git@MOODLE_400_STABLE"
+            --extra-plugins="https://github.com/pavel-pasechnik/moodle-tool_certificate.git@MOODLE_400_STABLE" \
+            --extra-plugins="https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git@MOODLE_400_STABLE"
         env:
           DB: pgsql
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
