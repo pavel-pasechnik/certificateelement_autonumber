@@ -39,17 +39,13 @@ jobs:
         run: |
           composer create-project -n --no-dev moodlehq/moodle-plugin-ci ci
           export PATH="$(pwd)/ci/bin:$PATH"
-          echo "$PATH"
 
       - name: Install Moodle core
         env:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
-          # Очистка старой базы, если уже существует
           psql -U moodle -h 127.0.0.1 -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
-
-          # Установка чистого Moodle без плагинов
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -66,7 +62,12 @@ jobs:
           git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-tool_certificate.git admin/tool/certificate
           git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git mod/coursecertificate
 
-      - name: Copy subplugin and upgrade Moodle
+      - name: Upgrade Moodle to register Workplace components
+        run: |
+          cd moodle
+          php admin/cli/upgrade.php --non-interactive --allow-unstable
+
+      - name: Copy subplugin and upgrade again
         run: |
           cd moodle
           mkdir -p admin/tool/certificate/element/autonumber
