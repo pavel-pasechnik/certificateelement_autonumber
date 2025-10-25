@@ -1,55 +1,17 @@
-name: Test & Release Moodle Plugin
+name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    env:
-      PATH: ${{ github.workspace }}/ci/bin:/usr/local/bin:/usr/bin:/bin
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: moodle
-          POSTGRES_PASSWORD: moodle
-          POSTGRES_DB: moodle
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U moodle"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          ini-values: max_input_vars=5000
-          extensions: pgsql, mysqli, zip, intl, gd, curl, xmlrpc, soap
-          coverage: none
-          tools: composer
-
-      - name: Install Moodle Plugin CI
-        run: composer create-project -n --no-dev moodlehq/moodle-plugin-ci ci ^4
-
-      - name: Configure locale
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y locales rsync
-          sudo locale-gen en_AU.UTF-8
-          sudo update-locale LANG=en_AU.UTF-8
 
       - name: Prepare Moodle and move plugin
         env:
@@ -58,74 +20,23 @@ jobs:
           export PATH="$(pwd)/ci/bin:$PATH"
           # Очистка старой Moodle-папки
           rm -rf moodle
-          # Установка Moodle с Workplace-плагинами фиксированной версии
+          mkdir -p moodle/admin/tool/certificate
+          mkdir -p moodle/mod
+
+          # Клонируем стабильные версии форков Павла
+          git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-tool_certificate.git moodle/admin/tool/certificate
+          git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
+
+          # Установка Moodle
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-user=moodle \
             --db-pass=moodle \
             --db-name=moodle \
-            --branch=main \
-            --extra-plugins="https://github.com/moodleworkplace/moodle-tool_certificate.git@MOODLE_400_STABLE,https://github.com/moodleworkplace/moodle-mod_coursecertificate.git@MOODLE_400_STABLE"
+            --branch=main
 
-          # Перенос сабплагина в структуру Moodle
+          # Перенос сабплагина
           mkdir -p moodle/admin/tool/certificate/element/autonumber
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
           cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
           rm -rf admin
-
-      - name: Initialise PHPUnit environment
-        run: |
-          php moodle/public/admin/tool/phpunit/cli/init.php
-
-      - name: Run PHPCS (Code style)
-        run: moodle-plugin-ci phpcs || true
-
-      - name: Run PHPUnit
-        run: moodle-plugin-ci phpunit
-
-  release:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set version and tag (incremental)
-        id: version
-        run: |
-          # Get the last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-
-          # Increment patch version
-          BASE=${LAST_TAG#v}
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
-          PATCH=$((PATCH + 1))
-          VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-
-          echo "➡️ Creating release $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-
-          git tag -a "$VERSION" -m "Automated release $VERSION"
-          git push origin "$VERSION"
-
-      - name: Prepare ZIP archive
-        run: |
-          zip -r certificateelement_autonumber-${{ env.VERSION }}.zip . \
-            -x "*.git*" "*.DS_Store*" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.VERSION }}
-          name: "Certificate Element Autonumber ${{ env.VERSION }}"
-          files: certificateelement_autonumber-${{ env.VERSION }}.zip
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
