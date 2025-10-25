@@ -17,18 +17,20 @@
 /**
  * Version metadata for the certificateelement_autonumber plugin.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Павел
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+// Plugin metadata.
 $plugin->component = 'certificateelement_autonumber';
-$plugin->version   = 2025102300;              // YYYYMMDDXX.
+$plugin->type      = 'certificateelement';     // Обязательно для корректной установки.
+$plugin->version   = 2025102307;              // YYYYMMDDXX.
 $plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
-$plugin->release   = '1.0.0';
-$plugin->maturity  = MATURITY_ALPHA;
+$plugin->release   = '1.0.7';
+$plugin->maturity  = MATURITY_STABLE;
 
 // Dependencies.
 $plugin->dependencies = [

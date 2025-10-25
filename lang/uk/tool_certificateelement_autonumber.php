@@ -30,3 +30,16 @@ $string['series_group'] = 'Група (ідентифікатор)';
 $string['series_coursegroup'] = 'Курс (коротка назва) + група (ідентифікатор)';
 $string['series_manual'] = 'Ручне введення';
 $string['manualseries'] = 'Серія вручну';
+
+$string['recalculate_numbers'] = 'Перерахувати номери';
+$string['recalculate_numbers_heading'] = 'Перерахунок номерів сертифікатів';
+$string['recalculate_done'] = 'Перераховано {$a} сертифікатів.';
+$string['norecordsfound'] = 'Видані сертифікати не знайдено.';
+$string['delete_plugin_data'] = 'Видалити дані плагіна';
+$string['delete_plugin_data_heading'] = 'Видалення даних плагіна AutoNumber';
+$string['delete_plugin_data_confirm'] = 'Ви впевнені, що хочете видалити всі дані та налаштування плагіна AutoNumber?';
+$string['delete_plugin_data_done'] = 'Усі дані плагіна успішно видалено.';
+$string['keep_plugin_data'] = 'Залишити всі дані та налаштування плагіна';
+$string['execute_uninstall_action'] = 'Виконати обране діяння';
+$string['uninstallmode'] = 'Дія при видаленні плагіна';
+$string['uninstallmode_desc'] = 'Оберіть, що робити з даними під час видалення плагіна AutoNumber.';

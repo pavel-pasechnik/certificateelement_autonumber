@@ -66,5 +66,33 @@ if ($hassiteconfig) {
         ));
     }
 
+    // Add a choice of action when uninstalling the plugin.
+    if (has_capability('certificateelement/autonumber:manage', $context)) {
+        $options = [
+            'keep' => get_string('keep_plugin_data', 'tool_certificateelement_autonumber'),
+            'delete' => get_string('delete_plugin_data', 'tool_certificateelement_autonumber'),
+        ];
+
+        $settings->add(new admin_setting_configselect(
+            'certificateelement_autonumber/uninstallmode',
+            get_string('uninstallmode', 'tool_certificateelement_autonumber'),
+            get_string('uninstallmode_desc', 'tool_certificateelement_autonumber'),
+            'keep',
+            $options
+        ));
+
+        $deleteurl = new moodle_url('/admin/certificateelement_autonumber/uninstall.php');
+        $deletebutton = new single_button(
+            $deleteurl,
+            get_string('execute_uninstall_action', 'tool_certificateelement_autonumber'),
+            'get'
+        );
+        $settings->add(new admin_setting_heading(
+            'certificateelement_autonumber_delete',
+            get_string('delete_plugin_data_heading', 'tool_certificateelement_autonumber'),
+            $OUTPUT->render($deletebutton)
+        ));
+    }
+
     $ADMIN->add('tools', $settings);
 }
