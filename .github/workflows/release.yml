@@ -48,6 +48,8 @@ jobs:
 
       - name: Install Moodle with dependencies
         run: |
+          # Удаляем старый каталог moodle, если остался от предыдущего запуска
+          rm -rf moodle
           # Клонируем зависимости Moodle Workplace в правильные каталоги Moodle
           git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git moodle/admin/tool/certificate
           git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
