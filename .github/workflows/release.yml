@@ -57,24 +57,20 @@ jobs:
             --db-user=moodle \
             --db-pass=moodle \
             --db-name=moodle \
-            --branch=main \
-            --no-init
+            --branch=main
 
-      - name: Install Workplace and subplugin
+      - name: Install Workplace plugins
         run: |
-          export PATH="$(pwd)/ci/bin:$PATH"
           cd moodle
-
-          # Установка Workplace-плагинов
           mkdir -p admin/tool mod
           git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-tool_certificate.git admin/tool/certificate
           git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git mod/coursecertificate
 
-          # Копируем сабплагин autonumber
+      - name: Copy subplugin and upgrade Moodle
+        run: |
+          cd moodle
           mkdir -p admin/tool/certificate/element/autonumber
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' ../ admin/tool/certificate/element/autonumber/
-
-          # Финальная инициализация Moodle с плагинами
           php admin/cli/upgrade.php --non-interactive --allow-unstable
 
       - name: Initialise PHPUnit environment
