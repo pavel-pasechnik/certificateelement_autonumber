@@ -48,28 +48,34 @@ jobs:
         env:
           COMPOSER_NO_INTERACTION: 1
 
-      - name: Install clean Moodle
+      - name: Prepare Workplace dependencies and plugin
         run: |
-          rm -rf moodle
+          mkdir -p .deps/moodle/admin/tool
+          mkdir -p .deps/moodle/mod
+
+          # Клонируем стабильные версии зависимостей
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git .deps/moodle/admin/tool/certificate
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git .deps/moodle/mod/coursecertificate
+
+          # Копируем твой сабплагин
+          mkdir -p .deps/moodle/admin/tool/certificate/element/autonumber
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' plugin/ .deps/moodle/admin/tool/certificate/element/autonumber/
+        env:
+          COMPOSER_NO_INTERACTION: 1
+
+      - name: Install Moodle + plugin (auto clone)
+        run: |
           moodle-plugin-ci install \
             --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
             --db-user=postgres \
             --db-pass=postgres \
-            --db-name=moodle
+            --db-name=moodle \
+            --branch=${{ matrix.moodle-branch }} \
+            --extra-plugins='.deps/moodle'
         env:
           DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-
-      - name: Add Workplace dependencies
-        run: |
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git moodle/admin/tool/certificate
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
-
-          mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' plugin/ moodle/admin/tool/certificate/element/autonumber/
-
-          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
 
       - name: Lint PHP
         run: moodle-plugin-ci phplint moodle/admin/tool/certificate/element/autonumber
@@ -98,3 +104,7 @@ jobs:
           gh release create "$TAG" ../../../certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup temp deps
+        if: always()
+        run: rm -rf .deps
