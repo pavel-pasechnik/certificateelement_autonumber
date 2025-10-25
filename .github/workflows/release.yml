@@ -21,7 +21,7 @@ jobs:
       matrix:
         include:
           - php: "8.3"
-            moodle-branch: "MOODLE_405_STABLE"
+            moodle-branch: "MOODLE_400_STABLE"
             database: pgsql
 
     steps:
@@ -48,57 +48,48 @@ jobs:
 
       - name: Install Moodle with dependencies
         run: |
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
-          cd moodle
-          mkdir -p admin/tool mod
-          git clone --depth 1 --branch ${{ matrix.moodle-branch }} https://github.com/pavel-pasechnik/moodle-tool_certificate.git admin/tool/certificate
-          git clone --depth 1 --branch ${{ matrix.moodle-branch }} https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git mod/coursecertificate
-          php admin/cli/upgrade.php --non-interactive --allow-unstable
+          moodle-plugin-ci install \
+            --db-type=pgsql \
+            --db-host=127.0.0.1 \
+            --db-user=postgres \
+            --db-pass=postgres \
+            --db-name=moodle \
+            --extra-plugins="https://github.com/pavel-pasechnik/moodle-tool_certificate.git@MOODLE_400_STABLE,https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git@MOODLE_400_STABLE"
         env:
           DB: pgsql
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: PHP Lint
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phplint --plugin ./plugin
+        run: moodle-plugin-ci phplint
 
       - name: PHP Mess Detector
         continue-on-error: true
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpmd --plugin ./plugin
+        run: moodle-plugin-ci phpmd
 
       - name: Code checker
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpcs --plugin ./plugin --max-warnings 0
+        run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: PHPDoc checker
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpdoc --plugin ./plugin --max-warnings 0
+        run: moodle-plugin-ci phpdoc --max-warnings 0
 
       - name: Validate plugin
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci validate --plugin ./plugin
+        run: moodle-plugin-ci validate
 
       - name: Check upgrade savepoints
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci savepoints --plugin ./plugin
+        run: moodle-plugin-ci savepoints
 
       - name: Mustache Lint
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci mustache --plugin ./plugin
+        run: moodle-plugin-ci mustache
 
       - name: Grunt build
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci grunt --plugin ./plugin --max-lint-warnings 0
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
 
       - name: PHPUnit tests
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpunit --plugin ./plugin --fail-on-warning --coverage-text
+        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text
 
       - name: Behat tests
         id: behat
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci behat --plugin ./plugin --profile chrome --scss-deprecations
+        run: moodle-plugin-ci behat --profile chrome --scss-deprecations
 
       - name: Upload Behat failures
         if: ${{ failure() && steps.behat.outcome == 'failure' }}
