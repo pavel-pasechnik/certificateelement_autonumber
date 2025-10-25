@@ -56,18 +56,18 @@ jobs:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
-          # Удаляем старую директорию Moodle, если есть
+          # Очистка старой Moodle-папки
           rm -rf moodle
-          # Устанавливаем Moodle с зависимостями
+          # Установка Moodle с Workplace-плагинами фиксированной версии
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-user=moodle \
             --db-pass=moodle \
             --db-name=moodle \
             --branch=main \
-            --extra-plugins="https://github.com/moodleworkplace/moodle-tool_certificate.git,https://github.com/moodleworkplace/moodle-mod_coursecertificate.git"
+            --extra-plugins="https://github.com/moodleworkplace/moodle-tool_certificate.git@MOODLE_400_STABLE,https://github.com/moodleworkplace/moodle-mod_coursecertificate.git@MOODLE_400_STABLE"
 
-          # Перемещаем сабплагин в нужную директорию
+          # Перенос сабплагина в структуру Moodle
           mkdir -p moodle/admin/tool/certificate/element/autonumber
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
           cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
