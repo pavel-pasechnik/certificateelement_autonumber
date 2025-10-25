@@ -51,19 +51,8 @@ jobs:
 
           # Очистка перед установкой
           rm -rf moodle
-          mkdir -p moodle/admin/tool
-          mkdir -p moodle/mod
 
-          # Клонируем форки Павла ДО установки Moodle
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
-            moodle/admin/tool/certificate
-
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
-            moodle/mod/coursecertificate
-
-          # Теперь устанавливаем Moodle (она увидит тип certificateelement)
+          # Устанавливаем Moodle сначала
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -73,7 +62,16 @@ jobs:
             --db-name=moodle \
             --branch=main
 
-          # Перенос сабплагина в структуру
+          # После установки добавляем зависимости Moodle Workplace
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/moodleworkplace/moodle-tool_certificate.git \
+            moodle/admin/tool/certificate
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/moodleworkplace/moodle-mod_coursecertificate.git \
+            moodle/mod/coursecertificate
+
+          # Перенос сабплагина в структуру tool_certificate
           mkdir -p moodle/admin/tool/certificate/element/autonumber
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ \
             moodle/admin/tool/certificate/element/autonumber/
