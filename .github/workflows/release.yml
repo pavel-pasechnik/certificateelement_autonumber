@@ -65,14 +65,27 @@ jobs:
 
       - name: Install Moodle + plugin (auto clone)
         run: |
+          # Moodle установит ядро сам
           moodle-plugin-ci install \
             --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
             --db-user=postgres \
             --db-pass=postgres \
             --db-name=moodle \
-            --branch=${{ matrix.moodle-branch }} \
-            --extra-plugins=".deps/moodle/admin/tool/certificate,.deps/moodle/mod/coursecertificate"
+            --branch=${{ matrix.moodle-branch }}
+
+          # После установки Moodle — вручную добавляем зависимости
+          mkdir -p moodle/admin/tool
+          mkdir -p moodle/mod
+          cp -r .deps/moodle/admin/tool/certificate moodle/admin/tool/
+          cp -r .deps/moodle/mod/coursecertificate moodle/mod/
+
+          # Копируем твой сабплагин внутрь установленного Moodle
+          mkdir -p moodle/admin/tool/certificate/element/autonumber
+          rsync -av --exclude '.git' --exclude '.github' plugin/ moodle/admin/tool/certificate/element/autonumber/
+
+          # Обновляем Moodle и запускаем апгрейд
+          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
         env:
           DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
