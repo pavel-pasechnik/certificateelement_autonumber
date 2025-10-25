@@ -72,7 +72,7 @@ jobs:
             --db-pass=postgres \
             --db-name=moodle \
             --branch=${{ matrix.moodle-branch }} \
-            --extra-plugins='.deps/moodle'
+            --extra-plugins=".deps/moodle/admin/tool/certificate,.deps/moodle/mod/coursecertificate"
         env:
           DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
