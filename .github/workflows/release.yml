@@ -51,8 +51,19 @@ jobs:
 
           # Очистка перед установкой
           rm -rf moodle
+          mkdir -p moodle/admin/tool
+          mkdir -p moodle/mod
 
-          # Устанавливаем Moodle через moodle-plugin-ci
+          # Клонируем форки Павла ДО установки Moodle
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
+            moodle/admin/tool/certificate
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
+            moodle/mod/coursecertificate
+
+          # Теперь устанавливаем Moodle (она увидит тип certificateelement)
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -61,18 +72,6 @@ jobs:
             --db-pass=moodle \
             --db-name=moodle \
             --branch=main
-
-          # Заменяем стандартные версии на форки Павла
-          rm -rf moodle/admin/tool/certificate
-          rm -rf moodle/mod/coursecertificate
-
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
-            moodle/admin/tool/certificate
-
-          git clone --depth 1 --branch MOODLE_400_STABLE \
-            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
-            moodle/mod/coursecertificate
 
           # Перенос сабплагина в структуру
           mkdir -p moodle/admin/tool/certificate/element/autonumber
