@@ -1,0 +1,62 @@
+name: Build, Test & Release Moodle Plugin
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: moodle
+          POSTGRES_PASSWORD: moodle
+          POSTGRES_DB: moodle
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U moodle"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pgsql, mysqli, zip, intl, gd, curl, xmlrpc, soap
+          coverage: none
+
+      - name: Install Moodle Plugin CI
+        run: composer create-project -n --no-dev moodlehq/moodle-plugin-ci ci ^4
+
+      - name: Set up Moodle Plugin CI
+        run: |
+          export PATH="$(pwd)/ci/bin:$PATH"
+          moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main
+
+      - name: Run PHPCS (Code style)
+        run: moodle-plugin-ci phpcs
+
+      - name: Run PHPUnit
+        run: moodle-plugin-ci phpunit
+
+      - name: Prepare ZIP archive
+        run: |
+          zip -r local_autonumber-${{ github.ref_name }}.zip . \
+            -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: local_autonumber-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

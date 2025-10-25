@@ -15,24 +15,23 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the local_autonumber plugin.
+ * Version metadata for the certificateelement_autonumber plugin.
  *
- * @package    local_autonumber
- * @category   admin
- * @copyright  2025 Павел Пасечник
+ * @package    tool_certificateelement_autonumber
+ * @copyright  2025 Павел
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_autonumber';   // Unique Plugin Identifier.
-$plugin->version   = 2025102000;           // YearMonthDayVersion.
-$plugin->requires  = 2022041900;           // Minimum Moodle Version (4.0+).
-$plugin->release   = '1.0.9';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->cron      = 0;
+$plugin->component = 'certificateelement_autonumber';
+$plugin->version   = 2025102300;              // YYYYMMDDXX.
+$plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
+$plugin->release   = '1.0.0';
+$plugin->maturity  = MATURITY_ALPHA;
 
-// Add dependency.
+// Dependencies.
 $plugin->dependencies = [
-    'mod_coursecertificate' => 2024050100, // Minimum version of coursecertificate.
+    'tool_certificate' => 2024042200, // Core Workplace certificate tool.
+    'mod_coursecertificate' => 2024042200, // Course certificate module.
 ];

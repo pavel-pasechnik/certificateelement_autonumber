@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - https://moodle.org/.
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,40 +15,56 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Settings for the local_autonumber plugin.
+ * Admin settings for the certificateelement_autonumber plugin.
  *
- * @package    local_autonumber
- * @category   admin
- * @copyright  2025 Павел Пасечник
+ * @package    tool_certificateelement_autonumber
+ * @copyright  2025 Павел
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_autonumber', get_string('pluginname', 'local_autonumber'));
+    $settings = new admin_settingpage(
+        'certificateelement_autonumber',
+        get_string('pluginname', 'tool_certificateelement_autonumber')
+    );
 
-    $choices = [
-        'category' => get_string('option_category', 'local_autonumber'),
-        'group' => get_string('option_group', 'local_autonumber'),
-        'coursegroup' => get_string('option_coursegroup', 'local_autonumber'),
-        'manual' => get_string('option_manual', 'local_autonumber'),
+    // Setting the series mode selection.
+    $options = [
+        'course' => get_string('series_course', 'tool_certificateelement_autonumber'),
+        'group' => get_string('series_group', 'tool_certificateelement_autonumber'),
+        'coursegroup' => get_string('series_coursegroup', 'tool_certificateelement_autonumber'),
+        'manual' => get_string('series_manual', 'tool_certificateelement_autonumber'),
     ];
 
     $settings->add(new admin_setting_configselect(
-        'local_autonumber/mode',
-        get_string('mode', 'local_autonumber'),
-        get_string('mode_desc', 'local_autonumber'),
-        'manual',
-        $choices
+        'certificateelement_autonumber/seriesmode',
+        get_string('seriesmode', 'tool_certificateelement_autonumber'),
+        get_string('seriesmode_desc', 'tool_certificateelement_autonumber'),
+        'course',
+        $options
     ));
 
+    // Manual series setup.
     $settings->add(new admin_setting_configtext(
-        'local_autonumber/seriesprefix',
-        get_string('seriesprefix', 'local_autonumber'),
-        get_string('seriesprefix_desc', 'local_autonumber'),
-        'КДАСК-№'
+        'certificateelement_autonumber/manualseries',
+        get_string('manualseries', 'tool_certificateelement_autonumber'),
+        get_string('manualseries_desc', 'tool_certificateelement_autonumber'),
+        'SER'
     ));
 
-    $ADMIN->add('localplugins', $settings);
+    // Check for the presence of the certificateelement/autonumber:manage right before adding the recalculation button.
+    $context = context_system::instance();
+    if (has_capability('certificateelement/autonumber:manage', $context)) {
+        $url = new moodle_url('/admin/tool/certificateelement_autonumber/recalculate.php');
+        $button = new single_button($url, get_string('recalculate_numbers', 'tool_certificateelement_autonumber'), 'get');
+        $settings->add(new admin_setting_heading(
+            'certificateelement_autonumber_recalculate',
+            get_string('recalculate_numbers_heading', 'tool_certificateelement_autonumber'),
+            $OUTPUT->render($button)
+        ));
+    }
+
+    $ADMIN->add('tools', $settings);
 }

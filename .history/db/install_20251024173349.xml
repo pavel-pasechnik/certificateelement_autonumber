@@ -1,0 +1,13 @@
+<XMLDB PATH="certificateelement_autonumber/db" VERSION="2025102400" COMMENT="Autonumber table">
+    <TABLE NAME="certificateelement_autonumber" COMMENT="Tracks issued certificate numbers">
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true"/>
+        <FIELD NAME="series" TYPE="char" LENGTH="50" NOTNULL="true"/>
+        <FIELD NAME="seqnum" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+    </TABLE>
+</XMLDB>
