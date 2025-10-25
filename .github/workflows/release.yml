@@ -46,16 +46,11 @@ jobs:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
-          # Очистка старой Moodle-папки
+
+          # Очистка перед установкой
           rm -rf moodle
-          mkdir -p moodle/admin/tool/certificate
-          mkdir -p moodle/mod
 
-          # Клонируем стабильные версии форков Павла
-          git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-tool_certificate.git moodle/admin/tool/certificate
-          git clone --depth 1 --branch MOODLE_400_STABLE https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
-
-          # Установка Moodle
+          # Устанавливаем Moodle через moodle-plugin-ci
           moodle-plugin-ci install \
             --db-type=pgsql \
             --db-host=127.0.0.1 \
@@ -65,9 +60,22 @@ jobs:
             --db-name=moodle \
             --branch=main
 
-          # Перенос сабплагина
+          # Заменяем стандартные версии на форки Павла
+          rm -rf moodle/admin/tool/certificate
+          rm -rf moodle/mod/coursecertificate
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-tool_certificate.git \
+            moodle/admin/tool/certificate
+
+          git clone --depth 1 --branch MOODLE_400_STABLE \
+            https://github.com/pavel-pasechnik/moodle-mod_coursecertificate.git \
+            moodle/mod/coursecertificate
+
+          # Перенос сабплагина в структуру
           mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ \
+            moodle/admin/tool/certificate/element/autonumber/
           cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
           rm -rf admin
 
