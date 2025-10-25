@@ -56,10 +56,18 @@ jobs:
           PGPASSWORD: moodle
         run: |
           export PATH="$(pwd)/ci/bin:$PATH"
-          psql -U moodle -h localhost -d postgres -c 'DROP DATABASE IF EXISTS moodle;'
-          # Create Moodle structure
-          moodle-plugin-ci install --db-type=pgsql --db-user=moodle --db-pass=moodle --db-name=moodle --branch=main --no-init
-          # Move plugin into correct Moodle subplugin folder
+          # Удаляем старую директорию Moodle, если есть
+          rm -rf moodle
+          # Устанавливаем Moodle с зависимостями
+          moodle-plugin-ci install \
+            --db-type=pgsql \
+            --db-user=moodle \
+            --db-pass=moodle \
+            --db-name=moodle \
+            --branch=main \
+            --extra-plugins="https://github.com/moodleworkplace/moodle-tool_certificate.git,https://github.com/moodleworkplace/moodle-mod_coursecertificate.git"
+
+          # Перемещаем сабплагин в нужную директорию
           mkdir -p moodle/admin/tool/certificate/element/autonumber
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
           cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
