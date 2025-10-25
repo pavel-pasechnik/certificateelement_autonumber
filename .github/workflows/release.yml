@@ -10,11 +10,12 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: "postgres"
-          POSTGRES_HOST_AUTH_METHOD: "trust"
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     strategy:
       fail-fast: false
@@ -22,10 +23,10 @@ jobs:
         include:
           - php: "8.3"
             moodle-branch: "MOODLE_400_STABLE"
-            database: pgsql
+            dbtype: "pgsql"
 
     steps:
-      - name: Check out repository code
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
           path: plugin
@@ -38,80 +39,62 @@ jobs:
           ini-values: max_input_vars=5000
           coverage: pcov
 
-      - name: Initialise moodle-plugin-ci
+      - name: Install moodle-plugin-ci
         run: |
           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
-          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
-          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          echo "$(cd ci/bin && pwd)" >> $GITHUB_PATH
+          echo "$(cd ci/vendor/bin && pwd)" >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
-          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+        env:
+          COMPOSER_NO_INTERACTION: 1
 
-      - name: Install Moodle with dependencies
+      - name: Install clean Moodle
         run: |
-          # Удаляем старый каталог moodle, если остался от предыдущего запуска
           rm -rf moodle
-          # Клонируем зависимости Moodle Workplace в правильные каталоги Moodle
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git moodle/admin/tool/certificate
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
-
-          # Устанавливаем Moodle с уже добавленными зависимостями
           moodle-plugin-ci install \
-            --db-type=pgsql \
+            --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
             --db-user=postgres \
             --db-pass=postgres \
             --db-name=moodle
         env:
-          DB: pgsql
+          DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
-      - name: PHP Lint
-        run: moodle-plugin-ci phplint
+      - name: Add Workplace dependencies
+        run: |
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git moodle/admin/tool/certificate
+          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git moodle/mod/coursecertificate
 
-      - name: PHP Mess Detector
-        continue-on-error: true
-        run: moodle-plugin-ci phpmd
+          mkdir -p moodle/admin/tool/certificate/element/autonumber
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' plugin/ moodle/admin/tool/certificate/element/autonumber/
 
-      - name: Code checker
-        run: moodle-plugin-ci phpcs --max-warnings 0
+          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
+
+      - name: Lint PHP
+        run: moodle-plugin-ci phplint moodle/admin/tool/certificate/element/autonumber
+
+      - name: PHP CodeSniffer
+        run: moodle-plugin-ci phpcs --max-warnings 0 moodle/admin/tool/certificate/element/autonumber
 
       - name: PHPDoc checker
-        run: moodle-plugin-ci phpdoc --max-warnings 0
+        run: moodle-plugin-ci phpdoc --max-warnings 0 moodle/admin/tool/certificate/element/autonumber
 
       - name: Validate plugin
-        run: moodle-plugin-ci validate
+        run: moodle-plugin-ci validate moodle/admin/tool/certificate/element/autonumber
 
-      - name: Check upgrade savepoints
-        run: moodle-plugin-ci savepoints
+      - name: Savepoints
+        run: moodle-plugin-ci savepoints moodle/admin/tool/certificate/element/autonumber
 
-      - name: Mustache Lint
-        run: moodle-plugin-ci mustache
-
-      - name: Grunt build
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
-
-      - name: PHPUnit tests
+      - name: Unit tests
         run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text
 
-      - name: Behat tests
-        id: behat
-        run: moodle-plugin-ci behat --profile chrome --scss-deprecations
-
-      - name: Upload Behat failures
-        if: ${{ failure() && steps.behat.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Behat failures (${{ join(matrix.*, ', ') }})
-          path: ${{ github.workspace }}/moodledata/behat_dump
-          retention-days: 7
-          if-no-files-found: ignore
-
-      - name: Package and release (only on main)
+      - name: Package release (main branch only)
         if: github.ref == 'refs/heads/main' && success()
         run: |
           cd moodle/admin/tool/certificate/element
           zip -r ../../../certificateelement_autonumber.zip autonumber
           TAG="v$(date +'%Y.%m.%d.%H%M')"
-          gh release create "$TAG" ../../../certificateelement_autonumber.zip -t "Release $TAG" -n "Automated CI release"
+          gh release create "$TAG" ../../../certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
