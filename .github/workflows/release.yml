@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - main
 
 jobs:
   build:
@@ -40,3 +40,39 @@ jobs:
           rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' --exclude 'admin/recalculate.php' ./ moodle/admin/tool/certificate/element/autonumber/
           cp admin/recalculate.php moodle/admin/tool/certificate/element/autonumber/recalculate.php
           rm -rf admin
+
+      - name: Generate next tag
+        id: tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Last tag: $LAST_TAG"
+          IFS='.' read -r -a PARTS <<< "${LAST_TAG#v}"
+          MAJOR=${PARTS[0]}
+          MINOR=${PARTS[1]}
+          PATCH=${PARTS[2]}
+          NEXT_TAG="v$MAJOR.$MINOR.$((PATCH + 1))"
+          echo "Next tag: $NEXT_TAG"
+          echo "tag=$NEXT_TAG" >> $GITHUB_OUTPUT
+          git tag "$NEXT_TAG"
+          git push origin "$NEXT_TAG"
+
+      - name: Create plugin archive
+        run: |
+          cd moodle/admin/tool/certificate/element
+          zip -r ../../../certificateelement_autonumber.zip autonumber
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: certificateelement_autonumber
+          path: moodle/admin/tool/certificateelement_autonumber.zip
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Autonumber for Moodle Certificates ${{ steps.tag.outputs.tag }}"
+          tag_name: ${{ steps.tag.outputs.tag }}
+          body_path: CHANGELOG.md
+          files: moodle/admin/tool/certificateelement_autonumber.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
