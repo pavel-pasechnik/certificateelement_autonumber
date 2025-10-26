@@ -20,8 +20,12 @@ jobs:
 
       - name: Prepare release version
         id: prep
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LAST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' || echo "")
+          # Получаем последний существующий тег из репозитория
+          LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "")
+
           if [[ -z "$LAST_TAG" ]]; then
             TAG="v1.0.0"
           else
@@ -33,12 +37,7 @@ jobs:
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
           fi
 
-          # Проверка на существование релиза, если есть — инкрементируем ещё раз
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "🔁 Release $TAG already exists, incrementing again..."
-            PATCH=$((PATCH + 1))
-            TAG="v${MAJOR}.${MINOR}.${PATCH}"
-          fi
+          echo "📦 Next release tag: $TAG"
 
           DATE=$(date +%Y%m%d)
           BUILD="00"
