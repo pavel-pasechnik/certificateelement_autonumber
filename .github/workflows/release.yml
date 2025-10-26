@@ -69,10 +69,7 @@ jobs:
 
       - name: Lint PHP
         run: |
-          find classes db lang -name "*.php" -print0 | xargs -0 moodle-plugin-ci phplint
-          moodle-plugin-ci phplint recalculate.php
-          moodle-plugin-ci phplint settings.php
-          moodle-plugin-ci phplint version.php
+          moodle-plugin-ci phplint --exclude=ci,.github,vendor,tests .
 
       - name: PHP CodeSniffer
         run: moodle-plugin-ci phpcs --max-warnings 0 .
