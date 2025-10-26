@@ -33,6 +33,13 @@ jobs:
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
           fi
 
+          # Проверка на существование релиза, если есть — инкрементируем ещё раз
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "🔁 Release $TAG already exists, incrementing again..."
+            PATCH=$((PATCH + 1))
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          fi
+
           DATE=$(date +%Y%m%d)
           BUILD="00"
           VERSION_NUMBER="${DATE}${BUILD}"
