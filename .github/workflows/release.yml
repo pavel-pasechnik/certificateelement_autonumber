@@ -43,11 +43,11 @@ jobs:
           echo "🔧 Updating version.php and install.xml to version $VERSION_NUMBER ($RELEASE_NUMBER)"
 
           # Обновляем version.php
-          sed -i "s/\\(\$plugin->version *= *\\)[0-9]*/\\1$VERSION_NUMBER/" admin/tool/certificate/element/autonumber/version.php
-          sed -i "s/\\(\$plugin->release *= *'\\)[^']*/\\1$RELEASE_NUMBER/" admin/tool/certificate/element/autonumber/version.php
+          sed -i "s/\\(\$plugin->version *= *\\)[0-9]*/\\1$VERSION_NUMBER/" version.php
+          sed -i "s/\\(\$plugin->release *= *'\\)[^']*/\\1$RELEASE_NUMBER/" version.php
 
           # Обновляем install.xml
-          sed -i "s/VERSION=\"[0-9]*\"/VERSION=\"$VERSION_NUMBER\"/" admin/tool/certificate/element/autonumber/db/install.xml
+          sed -i "s/VERSION=\"[0-9]*\"/VERSION=\"$VERSION_NUMBER\"/" db/install.xml
 
       - name: Prepare ZIP archive
         run: |
