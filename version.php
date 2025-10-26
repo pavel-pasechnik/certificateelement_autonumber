@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the tool_certificateelement_autonumber plugin.
+ * Version metadata for the certificateelement_autonumber plugin.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,15 +25,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Plugin metadata.
-$plugin->component = 'tool_certificateelement_autonumber';
-$plugin->subpluginof   = 'tool_certificate';
-$plugin->version   = 2025102307;              // YYYYMMDDXX.
-$plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
-$plugin->release   = '1.0.3';
-$plugin->maturity  = MATURITY_STABLE;
+$plugin->component   = 'certificateelement_autonumber';
+$plugin->subpluginof = 'tool_certificate';
+$plugin->version      = 2025102601; // Incremented internal version.
+$plugin->requires     = 2022041900.00; // Matches dependencies.
+$plugin->release      = '4.5.7';
+$plugin->maturity     = MATURITY_STABLE;
+$plugin->supported    = [400, 405]; // Moodle 4.0–4.5 support range.
 
 $plugin->dependencies = [
-    // Declare dependencies for correct installation order.
-    'tool_certificate' => 2025031804, // Core Workplace certificate tool.
-    'mod_coursecertificate' => 2025031804, // Course certificate module.
+    'tool_certificate' => 2025031804, // Workplace certificate tool 4.5.7.
+    'mod_coursecertificate' => 2025031804, // Course certificate module 4.5.7.
 ];

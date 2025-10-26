@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -17,9 +18,9 @@ jobs:
         with:
           php-version: "8.3"
 
-      - name: Package release
+      - name: Prepare release version
+        id: prep
         run: |
-          # Получаем последний релиз и увеличиваем номер
           LAST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' || echo "")
           if [[ -z "$LAST_TAG" ]]; then
             TAG="v1.0.0"
@@ -32,15 +33,36 @@ jobs:
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
           fi
 
-          echo "Creating release $TAG"
-
           DATE=$(date +%Y%m%d)
           BUILD="00"
           VERSION_NUMBER="${DATE}${BUILD}"
-          sed -i "s/\\(\$plugin->version\\s*=\\s*\\)[0-9]\\+;/\\1${VERSION_NUMBER};/" version.php
-          sed -i "s/\\(\$plugin->release\\s*=\\s*'\\)[^']*'/\\1${TAG#v}'/" version.php
 
-          zip -r tool_certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
-          gh release create "$TAG" tool_certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
+          echo "version_number=$VERSION_NUMBER" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Update version.php and install.xml
+        run: |
+          VERSION_NUMBER="${{ steps.prep.outputs.version_number }}"
+          TAG="${{ steps.prep.outputs.tag }}"
+
+          # Обновляем version.php
+          sed -i "s/\(\$plugin->version\s*=\s*\)[0-9]\+;/\1${VERSION_NUMBER};/" version.php
+          sed -i "s/\(\$plugin->release\s*=\s*'\)[^']*'/\1${TAG#v}'/" version.php
+
+          # Обновляем db/install.xml
+          if [ -f db/install.xml ]; then
+            sed -i "s/VERSION=\"[0-9]\+\"/VERSION=\"${VERSION_NUMBER}\"/" db/install.xml
+          fi
+
+      - name: Create release package
+        run: |
+          TAG="${{ steps.prep.outputs.tag }}"
+
+          zip -r tool_certificateelement_autonumber.zip . \
+            -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
+
+          gh release create "$TAG" tool_certificateelement_autonumber.zip \
+            -t "Release $TAG" \
+            -n "Automated release build for $TAG"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
