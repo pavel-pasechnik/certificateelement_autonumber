@@ -72,8 +72,24 @@ jobs:
 
       - name: Prepare ZIP archive
         run: |
-          zip -r certificateelement_autonumber.zip . \
-            -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*" ".github/*"
+          echo "📦 Preparing Moodle plugin package"
+          plugin="certificateelement_autonumber"
+          staging="$(mktemp -d)"
+
+          mkdir -p "$staging/$plugin"
+          rsync -a ./ "$staging/$plugin"/ \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude ".idea/" \
+            --exclude ".vscode/" \
+            --exclude "node_modules/" \
+            --exclude "vendor/" \
+            --exclude "build/" \
+            --exclude "ci/" \
+            --exclude "*.DS_Store" \
+            --exclude "*.history*"
+
+          (cd "$staging" && zip -r "$GITHUB_WORKSPACE/${plugin}.zip" "$plugin")
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
