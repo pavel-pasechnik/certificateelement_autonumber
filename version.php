@@ -27,13 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 // Plugin metadata.
 $plugin->component   = 'certificateelement_autonumber';
 $plugin->subpluginof = 'tool_certificate';
-$plugin->version      = 2025102601; // Incremented internal version.
-$plugin->requires     = 2022041900.00; // Matches dependencies.
+$plugin->version      = 2022042000; // Incremented internal version.
+$plugin->requires     = 2022042000; // Matches dependencies.
 $plugin->release      = '1.0.0';
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->supported    = [400, 405]; // Moodle 4.0–4.5 support range.
 
 $plugin->dependencies = [
-    'tool_certificate' => 2025031804, // Workplace certificate tool 4.5.7.
-    'mod_coursecertificate' => 2025031804, // Course certificate module 4.5.7.
+    'tool_certificate' => 2022042000, // Workplace certificate tool 4.5.7.
+    'mod_coursecertificate' => 2022042000, // Course certificate module 4.5.7.
 ];

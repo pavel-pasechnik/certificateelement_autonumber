@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <XMLDB PATH="admin/tool/certificate/element/autonumber/db"
-       VERSION="2025031804"
+       VERSION="2022042000"
        COMMENT="XMLDB file for certificateelement_autonumber plugin"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
