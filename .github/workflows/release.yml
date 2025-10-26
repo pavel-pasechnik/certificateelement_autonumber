@@ -49,11 +49,13 @@ jobs:
       - name: Install Moodle and required Workplace plugins
         run: |
           # Добавляем зависимые Workplace плагины
+          mkdir -p /home/runner/work/moodle
           moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-tool_certificate
           moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-mod_coursecertificate
 
           # Устанавливаем Moodle и сам сабплагин
           moodle-plugin-ci install \
+            --moodle /home/runner/work/moodle \
             --plugin . \
             --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
