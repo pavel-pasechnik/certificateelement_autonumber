@@ -17,7 +17,7 @@
 /**
  * Strings for component 'certificateelement_autonumber', language 'uk'
  *
- * @package    certificateelement_autonumber
+ * @package   certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,3 +46,4 @@ $string['uninstallmode_desc'] = 'Оберіть, що робити з даним
 $string['autonumber:recalculate'] = 'Перерахунок номерів сертифікатів';
 $string['autonumber_settings'] = 'Налаштування AutoNumber';
 $string['autonumber_settings_desc'] = 'Налаштування автоматичної нумерації сертифікатів.';
+$string['privacy:metadata'] = 'Елемент «Автоматична нумерація» не зберігає жодних персональних даних.';

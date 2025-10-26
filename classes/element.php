@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace certificateelement_autonumber;
+namespace tool_certificate\element\autonumber;
 
 /**
  * Element: Autonumber series + number.
@@ -23,7 +23,7 @@ namespace certificateelement_autonumber;
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \tool_certificate\element {
+class element extends \tool_certificate\element\base {
     /** @var string Серия сертификата */
     protected $series;
 

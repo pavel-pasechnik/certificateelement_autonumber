@@ -17,7 +17,7 @@
 /**
  * Strings for component 'certificateelement_autonumber', language 'ru'
  *
- * @package    certificateelement_autonumber
+ * @package   certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,3 +47,4 @@ $string['autonumber:recalculate'] = 'Recalculate certificate numbers';
 // Settings.
 $string['autonumber_settings'] = 'AutoNumber settings';
 $string['autonumber_settings_desc'] = 'Configure automatic numbering behavior for certificates.';
+$string['privacy:metadata'] = 'The Auto Number element does not store any personal data.';

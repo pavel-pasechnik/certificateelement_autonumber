@@ -17,7 +17,7 @@
 /**
  * Admin page to recalculate certificate numbers/series.
  *
- * @package    certificateelement_autonumber
+ * @package   certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

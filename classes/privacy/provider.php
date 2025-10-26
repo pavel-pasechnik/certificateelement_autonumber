@@ -15,18 +15,31 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the certificateelement_autonumber plugin.
+ * Privacy provider for the certificateelement_autonumber plugin.
  *
- * @package   certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace certificateelement_autonumber\privacy;
 
-// Plugin metadata.
-$plugin->component   = 'certificateelement_autonumber';
-$plugin->release      = '1.0.0';
-$plugin->version      = 2022042000; // Incremented internal version.
-$plugin->requires     = 2022041900.00; // Matches dependencies.
-$plugin->maturity     = MATURITY_STABLE;
+/**
+ * Privacy Subsystem implementation for certificateelement_autonumber.
+ *
+ * This plugin does not store any personal data.
+ *
+ * @package    certificateelement_autonumber
+ * @copyright  2025 Pavel Pasechnik
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the reason why this plugin stores no personal data.
+     *
+     * @return string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}
