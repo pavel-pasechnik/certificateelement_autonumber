@@ -29,7 +29,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          path: plugin
+          path: .
 
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -57,9 +57,9 @@ jobs:
           git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git .deps/moodle/admin/tool/certificate
           git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git .deps/moodle/mod/coursecertificate
 
-          # Копируем твой сабплагин
+          # Копируем сабплагин
           mkdir -p .deps/moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' plugin/ .deps/moodle/admin/tool/certificate/element/autonumber/
+          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' . .deps/moodle/admin/tool/certificate/element/autonumber/
         env:
           COMPOSER_NO_INTERACTION: 1
 
@@ -80,9 +80,9 @@ jobs:
           cp -r .deps/moodle/admin/tool/certificate moodle/admin/tool/
           cp -r .deps/moodle/mod/coursecertificate moodle/mod/
 
-          # Копируем твой сабплагин внутрь установленного Moodle
+          # Копируем сабплагин внутрь установленного Moodle
           mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude '.git' --exclude '.github' plugin/ moodle/admin/tool/certificate/element/autonumber/
+          rsync -av --exclude '.git' --exclude '.github' . moodle/admin/tool/certificate/element/autonumber/
 
           # Обновляем Moodle и запускаем апгрейд
           php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
