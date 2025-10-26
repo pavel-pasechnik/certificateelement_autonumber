@@ -67,8 +67,23 @@ jobs:
           DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
+      - name: Cleanup before next step
+        run: |
+          sudo pkill -f php || true
+          sleep 3
+
+      #- name: PHP Lint
+      #  run: moodle-plugin-ci phplint
+
+      - name: Moodle Code Checker
+        run: moodle-plugin-ci phpcs --max-warnings 0
+
+      - name: PHP Mess Detector
+        continue-on-error: true
+        run: moodle-plugin-ci phpmd
+
       - name: PHPDoc checker
-        run: moodle-plugin-ci phpdoc --max-warnings 0
+        run: moodle-plugin-ci phpdoc . --max-warnings 0
 
       - name: Validate plugin
         run: moodle-plugin-ci validate
@@ -76,8 +91,14 @@ jobs:
       - name: Savepoints
         run: moodle-plugin-ci savepoints
 
+      - name: Mustache Lint
+        run: moodle-plugin-ci mustache
+
+      - name: Grunt build check
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
+
       - name: Unit tests
-        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text
+        run: moodle-plugin-ci phpunit . --fail-on-warning --coverage-text
 
       - name: Package release (main branch only)
         if: github.ref == 'refs/heads/main' && success()
