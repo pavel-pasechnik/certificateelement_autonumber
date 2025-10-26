@@ -29,7 +29,7 @@ $plugin->component = 'tool_certificateelement_autonumber';
 $plugin->subpluginof   = 'tool_certificate';
 $plugin->version   = 2025102307;              // YYYYMMDDXX.
 $plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.
-$plugin->release   = '1.0.0';
+$plugin->release   = '1.0.3';
 $plugin->maturity  = MATURITY_STABLE;
 
 $plugin->dependencies = [

@@ -33,6 +33,13 @@ jobs:
           fi
 
           echo "Creating release $TAG"
+
+          DATE=$(date +%Y%m%d)
+          BUILD="00"
+          VERSION_NUMBER="${DATE}${BUILD}"
+          sed -i "s/\\(\$plugin->version\\s*=\\s*\\)[0-9]\\+;/\\1${VERSION_NUMBER};/" version.php
+          sed -i "s/\\(\$plugin->release\\s*=\\s*'\\)[^']*'/\\1${TAG#v}'/" version.php
+
           zip -r tool_certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
           gh release create "$TAG" tool_certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
