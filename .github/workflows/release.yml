@@ -51,7 +51,7 @@ jobs:
 
       - name: Prepare ZIP archive
         run: |
-          zip -r certificateelement_autonumber-${{ env.VERSION }}.zip . \
+          zip -r autonumber.zip . \
             -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*" ".github/*"
 
       - name: Create GitHub Release
@@ -59,7 +59,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
-          files: certificateelement_autonumber-${{ env.VERSION }}.zip
+          files: autonumber.zip
           draft: false
           prerelease: false
         env:
