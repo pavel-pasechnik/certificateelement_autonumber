@@ -68,27 +68,27 @@ jobs:
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: Lint PHP
-        run: moodle-plugin-ci phplint .
+        run: moodle-plugin-ci phplint --exclude=ci,vendor,.github
 
       - name: PHP CodeSniffer
-        run: moodle-plugin-ci phpcs --max-warnings 0 .
+        run: moodle-plugin-ci phpcs --max-warnings 0 --exclude=ci,vendor,.github .
 
       - name: PHPDoc checker
-        run: moodle-plugin-ci phpdoc --max-warnings 0 .
+        run: moodle-plugin-ci phpdoc --max-warnings 0 --exclude=ci,vendor,.github .
 
       - name: Validate plugin
-        run: moodle-plugin-ci validate .
+        run: moodle-plugin-ci validate --exclude=ci,vendor,.github .
 
       - name: Savepoints
-        run: moodle-plugin-ci savepoints .
+        run: moodle-plugin-ci savepoints --exclude=ci,vendor,.github .
 
       - name: Unit tests
-        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text .
+        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text --exclude=ci,vendor,.github .
 
       - name: Package release (main branch only)
         if: github.ref == 'refs/heads/main' && success()
         run: |
-          zip -r certificateelement_autonumber.zip .
+          zip -r certificateelement_autonumber.zip . -x ".github/*"
           TAG="v$(date +'%Y.%m.%d.%H%M')"
           gh release create "$TAG" certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
