@@ -19,8 +19,21 @@ jobs:
 
       - name: Package release
         run: |
+          # Получаем последний релиз и увеличиваем номер
+          LAST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' || echo "")
+          if [[ -z "$LAST_TAG" ]]; then
+            TAG="v1.0.0"
+          else
+            VERSION=$(echo "$LAST_TAG" | sed 's/^v//')
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            MINOR=$(echo "$VERSION" | cut -d. -f2)
+            PATCH=$(echo "$VERSION" | cut -d. -f3)
+            PATCH=$((PATCH + 1))
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          fi
+
+          echo "Creating release $TAG"
           zip -r certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
-          TAG="v$(date +'%Y.%m.%d.%H%M')"
           gh release create "$TAG" certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
