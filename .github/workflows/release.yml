@@ -6,69 +6,61 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  release:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
 
-      - name: Prepare release version
-        id: prep
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set version and tag (incremental)
+        id: version
         run: |
-          # Получаем последний существующий тег из репозитория
-          LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "")
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          BASE=${LAST_TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
+          PATCH=$((PATCH + 1))
+          VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "➡️ Creating release $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          if [[ -z "$LAST_TAG" ]]; then
-            TAG="v1.0.0"
-          else
-            VERSION=$(echo "$LAST_TAG" | sed 's/^v//')
-            MAJOR=$(echo "$VERSION" | cut -d. -f1)
-            MINOR=$(echo "$VERSION" | cut -d. -f2)
-            PATCH=$(echo "$VERSION" | cut -d. -f3)
-            PATCH=$((PATCH + 1))
-            TAG="v${MAJOR}.${MINOR}.${PATCH}"
-          fi
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git tag -a "$VERSION" -m "Automated release $VERSION"
+          git push origin "$VERSION"
 
-          echo "📦 Next release tag: $TAG"
-
-          DATE=$(date +%Y%m%d)
-          BUILD="00"
-          VERSION_NUMBER="${DATE}${BUILD}"
-
-          echo "version_number=$VERSION_NUMBER" >> $GITHUB_OUTPUT
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-
-      - name: Update version.php and install.xml
+      - name: Update version numbers in version.php and install.xml
         run: |
-          VERSION_NUMBER="${{ steps.prep.outputs.version_number }}"
-          TAG="${{ steps.prep.outputs.tag }}"
+          VERSION_NUMBER=$(date +'%Y%m%d00')
+          RELEASE_NUMBER=$(echo "${{ env.VERSION }}" | sed 's/^v//')
+          echo "🔧 Updating version.php and install.xml to version $VERSION_NUMBER ($RELEASE_NUMBER)"
 
           # Обновляем version.php
-          sed -i "s/\(\$plugin->version\s*=\s*\)[0-9]\+;/\1${VERSION_NUMBER};/" version.php
-          sed -i "s/\(\$plugin->release\s*=\s*'\)[^']*'/\1${TAG#v}'/" version.php
+          sed -i "s/\\(\$plugin->version *= *\\)[0-9]*/\\1$VERSION_NUMBER/" version.php
+          sed -i "s/\\(\$plugin->release *= *'\\)[^']*/\\1$RELEASE_NUMBER/" version.php
 
-          # Обновляем db/install.xml
-          if [ -f db/install.xml ]; then
-            sed -i "s/VERSION=\"[0-9]\+\"/VERSION=\"${VERSION_NUMBER}\"/" db/install.xml
-          fi
+          # Обновляем install.xml
+          sed -i "s/VERSION=\"[0-9]*\"/VERSION=\"$VERSION_NUMBER\"/" db/install.xml
 
-      - name: Create release package
+      - name: Prepare ZIP archive
         run: |
-          TAG="${{ steps.prep.outputs.tag }}"
+          zip -r certificateelement_autonumber-${{ env.VERSION }}.zip . \
+            -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*" ".github/*"
 
-          zip -r certificateelement_autonumber.zip . \
-            -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
-
-          gh release create "$TAG" certificateelement_autonumber.zip \
-            -t "Release $TAG" \
-            -n "Automated release build for $TAG"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: "Release ${{ env.VERSION }}"
+          files: certificateelement_autonumber-${{ env.VERSION }}.zip
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
