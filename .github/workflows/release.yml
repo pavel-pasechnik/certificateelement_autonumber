@@ -53,7 +53,7 @@ jobs:
           moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-mod_coursecertificate
           moodle-plugin-ci install \
             --moodle /home/runner/work/moodle \
-            --plugin ./plugin \
+            --plugin . \
             --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
             --db-user=postgres \
