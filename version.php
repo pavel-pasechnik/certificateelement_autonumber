@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // Plugin metadata.
 $plugin->component   = 'certificateelement_autonumber';
-$plugin->release      = '1.0.0';
-$plugin->version      = 2022042000; // Incremented internal version.
+$plugin->release      = '1.0.10';
+$plugin->version      = 2025102600; // Incremented internal version.
 $plugin->requires     = 2022041900.00; // Matches dependencies.
 $plugin->maturity     = MATURITY_STABLE;
