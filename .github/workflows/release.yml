@@ -80,7 +80,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
-          files: autonumber.zip
+          files: certificateelement_autonumber.zip
           draft: false
           prerelease: false
         env:
