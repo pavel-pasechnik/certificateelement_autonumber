@@ -43,15 +43,15 @@ jobs:
           echo "🔧 Updating version.php and install.xml to version $VERSION_NUMBER ($RELEASE_NUMBER)"
 
           # Обновляем version.php
-          sed -i "s/\\(\$plugin->version *= *\\)[0-9]*/\\1$VERSION_NUMBER/" autonumber/version.php
-          sed -i "s/\\(\$plugin->release *= *'\\)[^']*/\\1$RELEASE_NUMBER/" autonumber/version.php
+          sed -i "s/\\(\$plugin->version *= *\\)[0-9]*/\\1$VERSION_NUMBER/" version.php
+          sed -i "s/\\(\$plugin->release *= *'\\)[^']*/\\1$RELEASE_NUMBER/" version.php
 
           # Обновляем install.xml
-          sed -i "s/VERSION=\"[0-9]*\"/VERSION=\"$VERSION_NUMBER\"/" autonumber/db/install.xml
+          sed -i "s/VERSION=\"[0-9]*\"/VERSION=\"$VERSION_NUMBER\"/" db/install.xml
 
       - name: Prepare ZIP archive
         run: |
-          zip -r autonumber.zip . \
+          zip -r certificateelement_autonumber-${{ env.VERSION }}.zip . \
             -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*" ".github/*"
 
       - name: Create GitHub Release
@@ -59,7 +59,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
-          files: autonumber.zip
+          files: certificateelement_autonumber-${{ env.VERSION }}.zip
           draft: false
           prerelease: false
         env:
