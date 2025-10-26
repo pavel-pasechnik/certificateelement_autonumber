@@ -18,7 +18,7 @@
  * Strings for component 'certificateelement_autonumber', language 'ru'
  *
  * @package    certificateelement_autonumber
- * @copyright  2024 Pavel
+ * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

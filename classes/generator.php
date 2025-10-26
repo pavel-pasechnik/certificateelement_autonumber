@@ -20,7 +20,7 @@ namespace certificateelement_autonumber;
  * Generator for automatic certificate numbering.
  *
  * @package   certificateelement_autonumber
- * @copyright 2025 Павел
+ * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class generator {
