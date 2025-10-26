@@ -30,8 +30,3 @@ $plugin->release      = '1.0.0';
 $plugin->version      = 2022042000; // Incremented internal version.
 $plugin->requires     = 2022041900.00; // Matches dependencies.
 $plugin->maturity     = MATURITY_STABLE;
-
-$plugin->dependencies = [
-    'tool_certificate' => 2022042000, // Workplace certificate tool 4.5.7.
-    'mod_coursecertificate' => 2022042000, // Course certificate module 4.5.7.
-];

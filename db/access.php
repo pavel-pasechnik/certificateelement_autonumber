@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
 
-    // Allows administrators to recalculate and manage certificate numbers.
+    // Allows administrators (or specified roles) to manage certificate numbering.
     'certificateelement/autonumber:manage' => [
         'riskbitmask'  => RISK_CONFIG,
         'captype'      => 'write',
@@ -36,4 +36,5 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/site:config',
     ],
+
 ];

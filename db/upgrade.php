@@ -30,16 +30,13 @@
  * @param int $oldversion The version we are upgrading from.
  * @return bool True on success.
  */
-function xmldb_tool_certificateelement_autonumber_upgrade(int $oldversion): bool {
+function xmldb_certificateelement_autonumber_upgrade(int $oldversion): bool {
     global $DB;
-
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2025102301) {
-        // Example: Add a new field, table, etc.
-
-        // Mark this upgrade step as complete.
-        upgrade_plugin_savepoint(true, 2025102301, 'certificateelement', 'autonumber');
+    if ($oldversion < 2025102600) {
+        // Future upgrade steps here.
+        upgrade_plugin_savepoint(true, 2025102600, 'certificateelement', 'autonumber');
     }
 
     return true;
