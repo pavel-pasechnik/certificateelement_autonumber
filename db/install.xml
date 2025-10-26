@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMLDB PATH="certificateelement/autonumber/db" VERSION="2025102500" COMMENT="XMLDB file for certificateelement_autonumber plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<XMLDB PATH="admin/tool/certificate/element/autonumber/db"
+       VERSION="2025102500"
+       COMMENT="XMLDB file for certificateelement_autonumber plugin"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
     <TABLES>
-<TABLE NAME="certificateelement_autonumber" COMMENT="Certificate autonumber records">
-    <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="issueid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="series" TYPE="char" LENGTH="50" NOTNULL="true"/>
-        <FIELD NAME="number" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true"/>
-    </FIELDS>
-    <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="issueid_fk" TYPE="foreign" FIELDS="issueid" REFTABLE="tool_certificate_issues" REFFIELDS="id"/>
-    </KEYS>
-</TABLE>
+        <TABLE NAME="certificateelement_autonumber" COMMENT="Certificate autonumber records">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="issueid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="series" TYPE="char" LENGTH="50" NOTNULL="true"/>
+                <FIELD NAME="number" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="issueid_fk" TYPE="foreign" FIELDS="issueid" REFTABLE="tool_certificate_issues" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
     </TABLES>
 </XMLDB>
