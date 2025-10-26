@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for certificateelement_autonumber.
+ * Capability definitions for tool_certificateelement_autonumber.
  *
- * @package    certificateelement_autonumber
+ * @package    tool_certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

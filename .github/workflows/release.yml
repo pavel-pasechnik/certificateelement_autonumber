@@ -33,7 +33,7 @@ jobs:
           fi
 
           echo "Creating release $TAG"
-          zip -r certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
-          gh release create "$TAG" certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
+          zip -r tool_certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
+          gh release create "$TAG" tool_certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

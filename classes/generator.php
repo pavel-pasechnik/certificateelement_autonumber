@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace certificateelement_autonumber;
+namespace tool_certificateelement_autonumber;
 
 /**
  * Generator for automatic certificate numbering.
  *
- * @package   certificateelement_autonumber
+ * @package   tool_certificateelement_autonumber
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,17 +38,17 @@ class generator {
         $year = date('Y', $timecreated);
         $series = self::resolve_series($courseid, $userid);
 
-        $numberingmode = get_config('certificateelement_autonumber', 'numberingmode') ?: 'yearly';
+        $numberingmode = get_config('tool_certificateelement_autonumber', 'numberingmode') ?: 'yearly';
 
         if ($numberingmode === 'continuous') {
             $max = $DB->get_field_sql('
                 SELECT MAX(number)
-                  FROM {certificateelement_autonumber}
+                  FROM {tool_certificateelement_autonumber}
                  WHERE series = ?', [$series]);
         } else {
             $max = $DB->get_field_sql('
                 SELECT MAX(number)
-                  FROM {certificateelement_autonumber}
+                  FROM {tool_certificateelement_autonumber}
                  WHERE year = ? AND series = ?', [$year, $series]);
         }
 
@@ -67,7 +67,7 @@ class generator {
     public static function resolve_series(int $courseid, int $userid): string {
         global $DB;
 
-        $mode = get_config('certificateelement_autonumber', 'seriesmode') ?: 'course';
+        $mode = get_config('tool_certificateelement_autonumber', 'seriesmode') ?: 'course';
 
         switch ($mode) {
             case 'group':
@@ -80,7 +80,7 @@ class generator {
                 return "C{$courseid}-G{$gid}";
 
             case 'manual':
-                return get_config('certificateelement_autonumber', 'manualseries') ?: 'SER';
+                return get_config('tool_certificateelement_autonumber', 'manualseries') ?: 'SER';
 
             default:
                 $shortname = $DB->get_field('course', 'shortname', ['id' => $courseid]);

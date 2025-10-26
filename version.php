@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the certificateelement_autonumber plugin.
+ * Version metadata for the tool_certificateelement_autonumber plugin.
  *
- * @package    certificateelement_autonumber
+ * @package    tool_certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Plugin metadata.
-$plugin->component = 'certificateelement_autonumber';
+$plugin->component = 'tool_certificateelement_autonumber';
 $plugin->subpluginof   = 'tool_certificate';
 $plugin->version   = 2025102307;              // YYYYMMDDXX.
 $plugin->requires  = 2024042200;              // Requires Moodle 4.4 or later.

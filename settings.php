@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Admin settings for the certificateelement_autonumber plugin.
+ * Admin settings for the tool_certificateelement_autonumber plugin.
  *
- * @package    certificateelement_autonumber
+ * @package    tool_certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,49 +28,49 @@ if ($hassiteconfig) {
     // Check if the 'certificateelementplugins' category exists to avoid "parent does not exist" error.
     if ($ADMIN->locate('certificateelementplugins')) {
         $settings = new admin_settingpage(
-            'certificateelement_autonumber',
-            get_string('autonumber_settings', 'certificateelement_autonumber')
+            'tool_certificateelement_autonumber',
+            get_string('autonumber_settings', 'tool_certificateelement_autonumber')
         );
 
         // Series mode selection.
         $options = [
-            'course' => get_string('series_course', 'certificateelement_autonumber'),
-            'group' => get_string('series_group', 'certificateelement_autonumber'),
-            'coursegroup' => get_string('series_coursegroup', 'certificateelement_autonumber'),
-            'manual' => get_string('series_manual', 'certificateelement_autonumber'),
+            'course' => get_string('series_course', 'tool_certificateelement_autonumber'),
+            'group' => get_string('series_group', 'tool_certificateelement_autonumber'),
+            'coursegroup' => get_string('series_coursegroup', 'tool_certificateelement_autonumber'),
+            'manual' => get_string('series_manual', 'tool_certificateelement_autonumber'),
         ];
         $settings->add(new admin_setting_configselect(
-            'certificateelement_autonumber/seriesmode',
-            get_string('seriesmode', 'certificateelement_autonumber'),
-            get_string('seriesmode_desc', 'certificateelement_autonumber'),
+            'tool_certificateelement_autonumber/seriesmode',
+            get_string('seriesmode', 'tool_certificateelement_autonumber'),
+            get_string('seriesmode_desc', 'tool_certificateelement_autonumber'),
             'course',
             $options
         ));
 
         // Manual series input.
         $settings->add(new admin_setting_configtext(
-            'certificateelement_autonumber/manualseries',
-            get_string('manualseries', 'certificateelement_autonumber'),
-            get_string('manualseries_desc', 'certificateelement_autonumber'),
+            'tool_certificateelement_autonumber/manualseries',
+            get_string('manualseries', 'tool_certificateelement_autonumber'),
+            get_string('manualseries_desc', 'tool_certificateelement_autonumber'),
             'SER'
         ));
 
         // Recalculation info.
         $settings->add(new admin_setting_heading(
-            'certificateelement_autonumber_recalculate',
-            get_string('recalculate_numbers_heading', 'certificateelement_autonumber'),
-            get_string('recalculate_numbers_desc', 'certificateelement_autonumber')
+            'tool_certificateelement_autonumber_recalculate',
+            get_string('recalculate_numbers_heading', 'tool_certificateelement_autonumber'),
+            get_string('recalculate_numbers_desc', 'tool_certificateelement_autonumber')
         ));
 
         // Uninstall behavior.
         $options = [
-            'keep' => get_string('keep_plugin_data', 'certificateelement_autonumber'),
-            'delete' => get_string('delete_plugin_data', 'certificateelement_autonumber'),
+            'keep' => get_string('keep_plugin_data', 'tool_certificateelement_autonumber'),
+            'delete' => get_string('delete_plugin_data', 'tool_certificateelement_autonumber'),
         ];
         $settings->add(new admin_setting_configselect(
-            'certificateelement_autonumber/uninstallmode',
-            get_string('uninstallmode', 'certificateelement_autonumber'),
-            get_string('uninstallmode_desc', 'certificateelement_autonumber'),
+            'tool_certificateelement_autonumber/uninstallmode',
+            get_string('uninstallmode', 'tool_certificateelement_autonumber'),
+            get_string('uninstallmode_desc', 'tool_certificateelement_autonumber'),
             'keep',
             $options
         ));

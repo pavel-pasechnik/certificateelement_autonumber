@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace certificateelement_autonumber;
+namespace tool_certificateelement_autonumber;
 
 use tool_certificate\event\certificate_issued;
 use tool_certificate\event\certificate_revoked;
@@ -22,7 +22,7 @@ use tool_certificate\event\certificate_revoked;
 /**
  * Event observer for certificate autonumber.
  *
- * @package   certificateelement_autonumber
+ * @package   tool_certificateelement_autonumber
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,14 +39,14 @@ class observer {
         [$series, $number, $year] = generator::generate($issue->courseid ?? 0, $issue->userid, $issue->timecreated);
 
         // We check to see if there are any entries.
-        if (!$DB->record_exists('certificateelement_autonumber', ['issueid' => $issue->id])) {
+        if (!$DB->record_exists('tool_certificateelement_autonumber', ['issueid' => $issue->id])) {
             $record = (object)[
                 'issueid' => $issue->id,
                 'series' => $series,
                 'number' => $number,
                 'year' => $year,
             ];
-            $DB->insert_record('certificateelement_autonumber', $record);
+            $DB->insert_record('tool_certificateelement_autonumber', $record);
         }
     }
 
@@ -57,6 +57,6 @@ class observer {
      */
     public static function certificate_revoked(certificate_revoked $event) {
         global $DB;
-        $DB->delete_records('certificateelement_autonumber', ['issueid' => $event->objectid]);
+        $DB->delete_records('tool_certificateelement_autonumber', ['issueid' => $event->objectid]);
     }
 }
