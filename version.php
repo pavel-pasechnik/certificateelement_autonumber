@@ -34,6 +34,6 @@ $plugin->maturity  = MATURITY_STABLE;
 
 $plugin->dependencies = [
     // Declare dependencies for correct installation order.
-    'tool_certificate' => 2024042200, // Core Workplace certificate tool.
-    'mod_coursecertificate' => 2024042200, // Course certificate module.
+    'tool_certificate' => 2025031804, // Core Workplace certificate tool.
+    'mod_coursecertificate' => 2025031804, // Course certificate module.
 ];
