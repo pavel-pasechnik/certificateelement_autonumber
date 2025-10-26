@@ -72,7 +72,7 @@ jobs:
 
       - name: Prepare ZIP archive
         run: |
-          zip -r autonumber.zip . \
+          zip -r certificateelement_autonumber.zip . \
             -x "*.git*" "*.DS_Store" "*.history*" ".idea/*" ".vscode/*" "node_modules/*" "vendor/*" "build/*" "ci/*" ".github/*"
 
       - name: Create GitHub Release
