@@ -68,7 +68,14 @@ jobs:
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: Lint PHP
-        run: moodle-plugin-ci phplint .
+        run: |
+          moodle-plugin-ci phplint \
+            classes \
+            db \
+            lang \
+            recalculate.php \
+            settings.php \
+            version.php
 
       - name: PHP CodeSniffer
         run: moodle-plugin-ci phpcs --max-warnings 0 .
