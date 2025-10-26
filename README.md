@@ -61,3 +61,12 @@
 - The numbering is produced by `classes/generator.php` and rendered by the certificate element in `classes/element.php`.  
 - Event observers in `classes/observer.php` listen to certificate issue and revoke events to keep the data table in sync.  
 - Coding style follows the Moodle PHP guidelines; lint with `phpcs` if you make changes.
+
+---
+
+## Support
+- Visit the maintainer's GitHub page for updates and support: [github.com/pavel-pasechnik](https://github.com/pavel-pasechnik).
+
+---
+
+© 2025 Pavel Pasechnik
