@@ -7,7 +7,6 @@
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="issueid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-                <FIELD NAME="series" TYPE="char" LENGTH="50" NOTNULL="true"/>
                 <FIELD NAME="number" TYPE="int" LENGTH="10" NOTNULL="true"/>
                 <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true"/>
             </FIELDS>

@@ -25,66 +25,55 @@ namespace certificateelement_autonumber;
  */
 class generator {
     /**
-     * Возвращает следующую комбинацию серии и номера.
+     * Returns the series/number triplet for the next certificate.
      *
-     * @param int $courseid
-     * @param int $userid
-     * @param int $timecreated
+     * Numbering is global for the calendar year and counts every previously issued
+     * certificate, even if the element was added after some issues already existed.
+     *
+     * @param int $timecreated Issue timestamp
+     * @param int|null $issueid Issue ID for deterministic positioning; null when previewing
      * @return array [series, number, year]
      */
-    public static function generate(int $courseid, int $userid, int $timecreated): array {
+    public static function generate(int $timecreated, ?int $issueid = null): array {
         global $DB;
 
-        $year = date('Y', $timecreated);
-        $series = self::resolve_series($courseid, $userid);
+        $year = (int)date('Y', $timecreated);
+        [$start, $end] = self::get_year_bounds($year);
 
-        $numberingmode = get_config('certificateelement_autonumber', 'numberingmode') ?: 'yearly';
-
-        if ($numberingmode === 'continuous') {
-            $max = $DB->get_field_sql('
-                SELECT MAX(number)
-                  FROM {certificateelement_autonumber}
-                 WHERE series = ?', [$series]);
-        } else {
-            $max = $DB->get_field_sql('
-                SELECT MAX(number)
-                  FROM {certificateelement_autonumber}
-                 WHERE year = ? AND series = ?', [$year, $series]);
+        if ($issueid === null) {
+            $count = $DB->count_records_select(
+                'tool_certificate_issues',
+                'timecreated >= ? AND timecreated < ?',
+                [$start, $end]
+            );
+            return ['', $count + 1, $year];
         }
 
-        $newnumber = ((int)$max) + 1;
+        $count = $DB->get_field_sql(
+            "
+            SELECT COUNT(1)
+              FROM {tool_certificate_issues}
+             WHERE timecreated >= ?
+               AND timecreated < ?
+               AND (
+                   timecreated < ?
+                   OR (timecreated = ? AND id <= ?)
+               )",
+            [$start, $end, $timecreated, $timecreated, $issueid]
+        );
 
-        return [$series, $newnumber, $year];
+        return ['', (int)$count, $year];
     }
 
     /**
-     * Определяет серию на основе режима.
+     * Returns the timestamps that bound the provided year.
      *
-     * @param int $courseid
-     * @param int $userid
-     * @return string
+     * @param int $year
+     * @return array [starttimestamp, endtimestamp)
      */
-    public static function resolve_series(int $courseid, int $userid): string {
-        global $DB;
-
-        $mode = get_config('certificateelement_autonumber', 'seriesmode') ?: 'course';
-
-        switch ($mode) {
-            case 'group':
-                $groups = groups_get_user_groups($courseid, $userid);
-                return $groups && !empty($groups[0]) ? 'G' . reset($groups[0]) : 'G0';
-
-            case 'coursegroup':
-                $groups = groups_get_user_groups($courseid, $userid);
-                $gid = $groups && !empty($groups[0]) ? reset($groups[0]) : '0';
-                return "C{$courseid}-G{$gid}";
-
-            case 'manual':
-                return get_config('certificateelement_autonumber', 'manualseries') ?: 'SER';
-
-            default:
-                $shortname = $DB->get_field('course', 'shortname', ['id' => $courseid]);
-                return $shortname ?: "C{$courseid}";
-        }
+    protected static function get_year_bounds(int $year): array {
+        $start = mktime(0, 0, 0, 1, 1, $year);
+        $end = mktime(0, 0, 0, 1, 1, $year + 1);
+        return [$start, $end];
     }
 }

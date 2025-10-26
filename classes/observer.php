@@ -36,17 +36,16 @@ class observer {
         global $DB;
 
         $issue = $event->get_record_snapshot('tool_certificate_issues', $event->objectid);
-        [$series, $number, $year] = generator::generate($issue->courseid ?? 0, $issue->userid, $issue->timecreated);
+        [, $number, $year] = generator::generate((int)$issue->timecreated, (int)$issue->id);
 
         // We check to see if there are any entries.
-        if (!$DB->record_exists('certificateelement_autonumber', ['issueid' => $issue->id])) {
+        if (!$DB->record_exists('certificate_autonumber', ['issueid' => $issue->id])) {
             $record = (object)[
                 'issueid' => $issue->id,
-                'series' => $series,
                 'number' => $number,
                 'year' => $year,
             ];
-            $DB->insert_record('certificateelement_autonumber', $record);
+            $DB->insert_record('certificate_autonumber', $record);
         }
     }
 
@@ -57,6 +56,6 @@ class observer {
      */
     public static function certificate_revoked(certificate_revoked $event) {
         global $DB;
-        $DB->delete_records('certificateelement_autonumber', ['issueid' => $event->objectid]);
+        $DB->delete_records('certificate_autonumber', ['issueid' => $event->objectid]);
     }
 }

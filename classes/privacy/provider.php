@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace certificateelement_autonumber\privacy;
+namespace certificateelement_autonumber;
 
 /**
  * Privacy Subsystem implementation for certificateelement_autonumber.

@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 $observers = [
     [
         'eventname'   => '\tool_certificate\event\certificate_issued',
-        'callback'    => '\certificateelement_autonumber\element::issue_generated',
+        'callback'    => '\certificateelement_autonumber\observer::certificate_issued',
     ],
     [
         'eventname'   => '\tool_certificate\event\certificate_revoked',
-        'callback'    => '\certificateelement_autonumber\element::issue_revoked',
+        'callback'    => '\certificateelement_autonumber\observer::certificate_revoked',
     ],
 ];

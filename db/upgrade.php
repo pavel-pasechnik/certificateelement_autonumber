@@ -34,9 +34,13 @@ function xmldb_certificateelement_autonumber_upgrade(int $oldversion): bool {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2025102600) {
-        // Future upgrade steps here.
-        upgrade_plugin_savepoint(true, 2025102600, 'certificateelement', 'autonumber');
+    if ($oldversion < 2025102700) {
+        $table = new xmldb_table('certificate_autonumber');
+        $field = new xmldb_field('series');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2025102700, 'certificateelement', 'autonumber');
     }
 
     return true;

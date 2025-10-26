@@ -14,109 +14,120 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_certificate\element\autonumber;
+namespace certificateelement_autonumber;
+
+use tool_certificate\element_helper;
 
 /**
- * Element: Autonumber series + number.
+ * Certificate element that renders the generated number.
  *
  * @package   certificateelement_autonumber
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \tool_certificate\element\base {
-    /** @var string Серия сертификата */
-    protected $series;
 
-    /** @var int Certificate number */
-    protected $number;
+class element extends \tool_certificate\element {
 
     /**
-     * Outputting the value on the certificate.
+     * Inject the common typography and positioning controls.
      *
-     * @param \stdClass $issue
-     * @param \context $context
+     * @param \MoodleQuickForm $mform
+     */
+    public function render_form_elements($mform) {
+        parent::render_form_elements($mform);
+    }
+
+    /**
+     * Persist configuration.
+     *
+     * @param \stdClass $data
+     */
+    public function save_form_data(\stdClass $data) {
+        // Element-specific configuration is not required yet, store an empty object.
+        $data->data = json_encode(new \stdClass());
+        parent::save_form_data($data);
+    }
+
+    /**
+     * Draw the element content onto the generated PDF.
+     *
+     * @param \pdf $pdf
+     * @param bool $preview
+     * @param \stdClass $user
+     * @param \stdClass|null $issue
+     */
+    public function render($pdf, $preview, $user, $issue) {
+        [, $number] = $this->resolve_number($preview, $user, $issue);
+        $content = $this->format_number($number);
+
+        element_helper::render_content($pdf, $this, $content);
+    }
+
+    /**
+     * Render HTML preview in the drag-and-drop designer.
+     *
      * @return string
      */
-    public function render($issue, $context) {
-        global $DB;
+    public function render_html() {
+        $content = $this->format_number(1);
 
-        $record = $DB->get_record('certificateelement_autonumber', ['issueid' => $issue->id]);
-        if ($record) {
-            return format_string("{$record->series}-{$record->number}");
-        }
-
-        return get_string('autonumber_missing', 'certificateelement_autonumber');
+        return element_helper::render_html_content($this, $content);
     }
 
     /**
-     * Called when issuing a certificate.
+     * Helper to prepare data for the form.
      *
-     * @param \stdClass $issue
+     * @return \stdClass|array
      */
-    public static function issue_generated($issue) {
-        global $DB;
-
-        $year = date('Y', $issue->timecreated);
-        $courseid = $issue->courseid ?? 0;
-        $series = self::define_series($courseid, $issue->userid);
-
-        $max = $DB->get_record_sql("
-            SELECT MAX(number) AS maxnum
-              FROM {certificateelement_autonumber}
-             WHERE year = ? AND series = ?", [$year, $series]);
-
-        $newnumber = ($max->maxnum ?? 0) + 1;
-
-        $record = (object)[
-            'issueid' => $issue->id,
-            'series' => $series,
-            'number' => $newnumber,
-            'year' => $year,
-        ];
-        $DB->insert_record('certificateelement_autonumber', $record);
+    public function prepare_data_for_form() {
+        return parent::prepare_data_for_form();
     }
 
     /**
-     * The logic of determining the series based on the template settings.
+     * Compose a display string for the generated number.
      *
-     * @param int $courseid
-     * @param int $userid
+     * @param int $number
      * @return string
      */
-    protected static function define_series($courseid, $userid): string {
-        global $DB;
-
-        $mode = get_config('certificateelement_autonumber', 'seriesmode') ?: 'course';
-        switch ($mode) {
-            case 'group':
-                $group = groups_get_user_groups($courseid, $userid);
-                return $group ? 'G' . reset($group[0]) : 'G0';
-            case 'coursegroup':
-                $group = groups_get_user_groups($courseid, $userid);
-                return "C{$courseid}-G" . (reset($group[0]) ?: '0');
-            case 'manual':
-                return get_config('certificateelement_autonumber', 'manualseries') ?: 'SER';
-            default:
-                $shortname = $DB->get_field('course', 'shortname', ['id' => $courseid]) ?? '';
-                $letters = implode(
-                    '',
-                    array_map(
-                        static fn($word) => mb_strtoupper(mb_substr($word, 0, 1)),
-                        preg_split('/\s+/', $shortname)
-                    )
-                );
-                $series = preg_replace("/[^A-Z']/u", '', $letters);
-                return $series ?: "C{$courseid}";
-        }
+    protected function format_number(int $number): string {
+        $padded = str_pad((string)$number, 10, '0', STR_PAD_LEFT);
+        return format_string($padded);
     }
 
     /**
-     * Deleting a number when revoking a certificate.
+     * Resolve the numeric triplet to show, reusing the generator where possible.
      *
-     * @param \stdClass $issue
+     * @param bool $preview
+     * @param \stdClass $user
+     * @param \stdClass|null $issue
+     * @return array
      */
-    public static function issue_revoked($issue) {
+    protected function resolve_number(bool $preview, \stdClass $user, ?\stdClass $issue): array {
         global $DB;
-        $DB->delete_records('certificateelement_autonumber', ['issueid' => $issue->id]);
+
+        if ($preview || empty($issue) || empty($issue->id)) {
+            // In preview mode we only count how many issues exist in the current year.
+            $timecreated = ($issue && isset($issue->timecreated)) ? (int)$issue->timecreated : time();
+
+            [, $number, $year] = generator::generate($timecreated);
+            return ['', $number, (int)$year];
+        }
+
+        $record = $DB->get_record('certificate_autonumber', ['issueid' => $issue->id]);
+
+        if (!$record) {
+            // Fallback in case the observer has not persisted a number yet.
+            $timecreated = isset($issue->timecreated) ? (int)$issue->timecreated : time();
+
+            [, $number, $year] = generator::generate($timecreated, (int)$issue->id);
+            $record = (object)[
+                'issueid' => $issue->id,
+                'number' => $number,
+                'year' => $year,
+            ];
+            $DB->insert_record('certificate_autonumber', $record);
+        }
+
+        return ['', (int)$record->number, (int)$record->year];
     }
 }
