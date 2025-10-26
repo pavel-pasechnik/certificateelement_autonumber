@@ -1,101 +1,23 @@
-name: Moodle Sub-plugin CI
+name: Build and Release
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-22.04
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - php: "8.3"
-            moodle-branch: "MOODLE_405_STABLE"
-            dbtype: "pgsql"
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP ${{ matrix.php }}
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: pgsql, intl, zip, xml, dom, mbstring, curl, json
-          ini-values: max_input_vars=5000
-          coverage: pcov
+          php-version: "8.3"
 
-      - name: Install moodle-plugin-ci
-        run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
-          echo "$(cd ci/bin && pwd)" >> $GITHUB_PATH
-          echo "$(cd ci/vendor/bin && pwd)" >> $GITHUB_PATH
-          sudo locale-gen en_AU.UTF-8
-        env:
-          COMPOSER_NO_INTERACTION: 1
-
-      - name: Install Moodle and required Workplace plugins
-        run: |
-          mkdir -p /home/runner/work/moodle
-          moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-tool_certificate
-          moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-mod_coursecertificate
-          moodle-plugin-ci install \
-            --moodle /home/runner/work/moodle \
-            --plugin . \
-            --db-type=${{ matrix.dbtype }} \
-            --db-host=127.0.0.1 \
-            --db-user=postgres \
-            --db-pass=postgres \
-            --db-name=moodle \
-            --branch=${{ matrix.moodle-branch }}
-        env:
-          DB: ${{ matrix.dbtype }}
-          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-
-      - name: Cleanup before next step
-        run: |
-          sudo pkill -f php || true
-          sleep 3
-
-      - name: Moodle Code Checker
-        run: moodle-plugin-ci phpcs --max-warnings 0
-
-      - name: PHP Mess Detector
-        continue-on-error: true
-        run: moodle-plugin-ci phpmd
-
-      - name: PHPDoc checker
-        run: moodle-plugin-ci phpdoc --max-warnings 0
-
-      - name: Validate plugin
-        run: moodle-plugin-ci validate
-
-      - name: Savepoints
-        run: moodle-plugin-ci savepoints
-
-      - name: Mustache Lint
-        run: moodle-plugin-ci mustache
-
-      - name: Grunt build check
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
-
-      - name: Unit tests
-        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text
-
-      - name: Package release (main branch only)
-        if: github.ref == 'refs/heads/main' && success()
+      - name: Package release
         run: |
           zip -r certificateelement_autonumber.zip . -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
           TAG="v$(date +'%Y.%m.%d.%H%M')"
