@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Moodle plugin coding standards">
-    <description>Moodle coding standard for tool_certificateelement_autonumber plugin.</description>
+    <description>Moodle coding standard for certificateelement_autonumber plugin.</description>
 
     <!-- Стандарт Moodle -->
     <rule ref="moodle"/>

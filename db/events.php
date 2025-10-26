@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Event observers for tool_certificateelement_autonumber.
+ * Event observers for certificateelement_autonumber.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,10 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 $observers = [
     [
         'eventname'   => '\tool_certificate\event\certificate_issued',
-        'callback'    => '\tool_certificateelement_autonumber\element::issue_generated',
+        'callback'    => '\certificateelement_autonumber\element::issue_generated',
     ],
     [
         'eventname'   => '\tool_certificate\event\certificate_revoked',
-        'callback'    => '\tool_certificateelement_autonumber\element::issue_revoked',
+        'callback'    => '\certificateelement_autonumber\element::issue_revoked',
     ],
 ];

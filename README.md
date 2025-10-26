@@ -2,11 +2,11 @@
 
 [![Moodle](https://img.shields.io/badge/Moodle-4.0--4.5-orange?logo=moodle&style=flat-square)](https://moodle.org/plugins/tool_certificate)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
-[![Latest Release](https://img.shields.io/github/v/release/pavel-pasechnik/tool_certificateelement_autonumber?label=Download&style=flat-square)](https://github.com/pavel-pasechnik/tool_certificateelement_autonumber/releases/latest)
-[![Build Status](https://github.com/pavel-pasechnik/tool_certificateelement_autonumber/actions/workflows/release.yml/badge.svg)](https://github.com/pavel-pasechnik/tool_certificateelement_autonumber/actions/workflows/release.yml)
+[![Latest Release](https://img.shields.io/github/v/release/pavel-pasechnik/certificateelement_autonumber?label=Download&style=flat-square)](https://github.com/pavel-pasechnik/certificateelement_autonumber/releases/latest)
+[![Build Status](https://github.com/pavel-pasechnik/certificateelement_autonumber/actions/workflows/release.yml/badge.svg)](https://github.com/pavel-pasechnik/certificateelement_autonumber/actions/workflows/release.yml)
 [![Maintainer](https://img.shields.io/badge/Maintainer-Pavel%20Pasechnik-blue?style=flat-square)](https://github.com/pavel-pasechnik)
 
-**Component:** `tool_certificateelement_autonumber`  
+**Component:** `certificateelement_autonumber`  
 **Maintainer:** Pavel Pasechnik (Kyiv, Ukraine)  
 **Compatible with:** Moodle 4.0 — 4.5+  
 **License:** GNU GPL v3
@@ -64,7 +64,7 @@ Available options:
 
 Admins can recalculate all existing certificate numbers using:
 - The **“Recalculate numbers”** button in plugin settings  
-  (runs `/admin/tool_certificateelement_autonumber/recalculate.php`)
+  (runs `/admin/certificateelement_autonumber/recalculate.php`)
 
 Each issued certificate gets a new number consistent with the current numbering rules.
 
@@ -74,9 +74,9 @@ Each issued certificate gets a new number consistent with the current numbering 
 
 | Language  | File Path                                      | Status |
 | --------- | ---------------------------------------------- | ------ |
-| English   | `lang/en/tool_certificateelement_autonumber.php` | ✅     |
-| Ukrainian | `lang/uk/tool_certificateelement_autonumber.php` | ✅     |
-| Russian   | `lang/ru/tool_certificateelement_autonumber.php` | ✅     |
+| English   | `lang/en/certificateelement_autonumber.php` | ✅     |
+| Ukrainian | `lang/uk/certificateelement_autonumber.php` | ✅     |
+| Russian   | `lang/ru/certificateelement_autonumber.php` | ✅     |
 
 ---
 

@@ -17,18 +17,18 @@
 /**
  * Form fragment for certificate element settings.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$mform->addElement('select', 'seriesmode', get_string('seriesmode', 'tool_certificateelement_autonumber'), [
-    'course' => get_string('series_course', 'tool_certificateelement_autonumber'),
-    'group' => get_string('series_group', 'tool_certificateelement_autonumber'),
-    'coursegroup' => get_string('series_coursegroup', 'tool_certificateelement_autonumber'),
-    'manual' => get_string('series_manual', 'tool_certificateelement_autonumber'),
+$mform->addElement('select', 'seriesmode', get_string('seriesmode', 'certificateelement_autonumber'), [
+    'course' => get_string('series_course', 'certificateelement_autonumber'),
+    'group' => get_string('series_group', 'certificateelement_autonumber'),
+    'coursegroup' => get_string('series_coursegroup', 'certificateelement_autonumber'),
+    'manual' => get_string('series_manual', 'certificateelement_autonumber'),
 ]);
 $mform->setDefault('seriesmode', 'course');
-$mform->addElement('text', 'manualseries', get_string('manualseries', 'tool_certificateelement_autonumber'));
+$mform->addElement('text', 'manualseries', get_string('manualseries', 'certificateelement_autonumber'));

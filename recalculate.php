@@ -17,7 +17,7 @@
 /**
  * Admin page to recalculate certificate numbers/series.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,20 +29,20 @@ require_capability('moodle/site:config', context_system::instance());
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url('/admin/tool/certificate/element/autonumber/recalculate.php'));
-$PAGE->set_title(get_string('recalculate_numbers', 'tool_certificateelement_autonumber'));
-$PAGE->set_heading(get_string('pluginname', 'tool_certificateelement_autonumber'));
+$PAGE->set_title(get_string('recalculate_numbers', 'certificateelement_autonumber'));
+$PAGE->set_heading(get_string('pluginname', 'certificateelement_autonumber'));
 
 echo $OUTPUT->header();
 
-$count = \tool_certificateelement_autonumber\manager::recalculate_all();
+$count = \certificateelement_autonumber\manager::recalculate_all();
 
 echo $OUTPUT->notification(
-    get_string('recalculate_done', 'tool_certificateelement_autonumber', $count),
+    get_string('recalculate_done', 'certificateelement_autonumber', $count),
     'notifysuccess'
 );
 
 echo $OUTPUT->continue_button(
-    new moodle_url('/admin/settings.php', ['section' => 'tool_certificateelement_autonumber'])
+    new moodle_url('/admin/settings.php', ['section' => 'certificateelement_autonumber'])
 );
 
 echo $OUTPUT->footer();

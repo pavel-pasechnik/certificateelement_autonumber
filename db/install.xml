@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <XMLDB PATH="admin/tool/certificate/element/autonumber/db"
        VERSION="2025031804"
-       COMMENT="XMLDB file for tool_certificateelement_autonumber plugin"
+       COMMENT="XMLDB file for certificateelement_autonumber plugin"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <TABLES>
-        <TABLE NAME="tool_certificateelement_autonumber" COMMENT="Certificate autonumber records">
+        <TABLE NAME="certificateelement_autonumber" COMMENT="Certificate autonumber records">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="issueid" TYPE="int" LENGTH="10" NOTNULL="true"/>

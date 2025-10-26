@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_certificateelement_autonumber;
+namespace certificateelement_autonumber;
 
 /**
  * Manager class for autonumber operations.
  *
- * @package   tool_certificateelement_autonumber
+ * @package   certificateelement_autonumber
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ class manager {
         global $DB;
 
         $issues = $DB->get_records('tool_certificate_issues');
-        $DB->delete_records('tool_certificateelement_autonumber');
+        $DB->delete_records('certificateelement_autonumber');
         $count = 0;
 
         foreach ($issues as $issue) {
@@ -44,7 +44,7 @@ class manager {
                 'number' => $number,
                 'year' => $year,
             ];
-            $DB->insert_record('tool_certificateelement_autonumber', $record);
+            $DB->insert_record('certificateelement_autonumber', $record);
             $count++;
         }
 

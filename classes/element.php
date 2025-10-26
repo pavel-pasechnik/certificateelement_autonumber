@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_certificateelement_autonumber;
+namespace certificateelement_autonumber;
 
 /**
  * Element: Autonumber series + number.
  *
- * @package   tool_certificateelement_autonumber
+ * @package   certificateelement_autonumber
  * @copyright 2025 Pavel Pasechnik
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,12 +40,12 @@ class element extends \tool_certificate\element {
     public function render($issue, $context) {
         global $DB;
 
-        $record = $DB->get_record('tool_certificateelement_autonumber', ['issueid' => $issue->id]);
+        $record = $DB->get_record('certificateelement_autonumber', ['issueid' => $issue->id]);
         if ($record) {
             return format_string("{$record->series}-{$record->number}");
         }
 
-        return get_string('autonumber_missing', 'tool_certificateelement_autonumber');
+        return get_string('autonumber_missing', 'certificateelement_autonumber');
     }
 
     /**
@@ -62,7 +62,7 @@ class element extends \tool_certificate\element {
 
         $max = $DB->get_record_sql("
             SELECT MAX(number) AS maxnum
-              FROM {tool_certificateelement_autonumber}
+              FROM {certificateelement_autonumber}
              WHERE year = ? AND series = ?", [$year, $series]);
 
         $newnumber = ($max->maxnum ?? 0) + 1;
@@ -73,7 +73,7 @@ class element extends \tool_certificate\element {
             'number' => $newnumber,
             'year' => $year,
         ];
-        $DB->insert_record('tool_certificateelement_autonumber', $record);
+        $DB->insert_record('certificateelement_autonumber', $record);
     }
 
     /**
@@ -86,7 +86,7 @@ class element extends \tool_certificate\element {
     protected static function define_series($courseid, $userid): string {
         global $DB;
 
-        $mode = get_config('tool_certificateelement_autonumber', 'seriesmode') ?: 'course';
+        $mode = get_config('certificateelement_autonumber', 'seriesmode') ?: 'course';
         switch ($mode) {
             case 'group':
                 $group = groups_get_user_groups($courseid, $userid);
@@ -95,7 +95,7 @@ class element extends \tool_certificate\element {
                 $group = groups_get_user_groups($courseid, $userid);
                 return "C{$courseid}-G" . (reset($group[0]) ?: '0');
             case 'manual':
-                return get_config('tool_certificateelement_autonumber', 'manualseries') ?: 'SER';
+                return get_config('certificateelement_autonumber', 'manualseries') ?: 'SER';
             default:
                 $shortname = $DB->get_field('course', 'shortname', ['id' => $courseid]) ?? '';
                 $letters = implode(
@@ -117,6 +117,6 @@ class element extends \tool_certificate\element {
      */
     public static function issue_revoked($issue) {
         global $DB;
-        $DB->delete_records('tool_certificateelement_autonumber', ['issueid' => $issue->id]);
+        $DB->delete_records('certificateelement_autonumber', ['issueid' => $issue->id]);
     }
 }

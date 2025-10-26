@@ -58,10 +58,10 @@ jobs:
         run: |
           TAG="${{ steps.prep.outputs.tag }}"
 
-          zip -r tool_certificateelement_autonumber.zip . \
+          zip -r certificateelement_autonumber.zip . \
             -x ".github/*" ".git/*" ".gitignore" ".*" "__MACOSX/*" ".DS_Store"
 
-          gh release create "$TAG" tool_certificateelement_autonumber.zip \
+          gh release create "$TAG" certificateelement_autonumber.zip \
             -t "Release $TAG" \
             -n "Automated release build for $TAG"
         env:

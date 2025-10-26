@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Upgrade script for the tool_certificateelement_autonumber plugin.
+ * Upgrade script for the certificateelement_autonumber plugin.
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +28,7 @@
  * @param int $oldversion The version we are upgrading from
  * @return bool
  */
-function xmldb_tool_certificateelement_autonumber_upgrade(int $oldversion): bool {
+function xmldb_certificateelement_autonumber_upgrade(int $oldversion): bool {
     global $DB;
 
     $dbman = $DB->get_manager();

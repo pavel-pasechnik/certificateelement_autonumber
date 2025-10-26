@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_certificateelement_autonumber', language 'ru'
+ * Strings for component 'certificateelement_autonumber', language 'ru'
  *
- * @package    tool_certificateelement_autonumber
+ * @package    certificateelement_autonumber
  * @copyright  2025 Pavel Pasechnik
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
