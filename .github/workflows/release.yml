@@ -28,8 +28,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          path: .
 
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -48,76 +46,48 @@ jobs:
         env:
           COMPOSER_NO_INTERACTION: 1
 
-      - name: Prepare Workplace dependencies and plugin
+      - name: Install Moodle and required Workplace plugins
         run: |
-          mkdir -p .deps/moodle/admin/tool
-          mkdir -p .deps/moodle/mod
+          # Добавляем зависимые Workplace плагины
+          moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-tool_certificate
+          moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE moodleworkplace/moodle-mod_coursecertificate
 
-          # Клонируем стабильные версии зависимостей
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-tool_certificate.git .deps/moodle/admin/tool/certificate
-          git clone --branch MOODLE_400_STABLE --depth 1 https://github.com/moodleworkplace/moodle-mod_coursecertificate.git .deps/moodle/mod/coursecertificate
-
-          # Копируем сабплагин
-          mkdir -p .deps/moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude 'moodle' --exclude '.git' --exclude 'ci' . .deps/moodle/admin/tool/certificate/element/autonumber/
-        env:
-          COMPOSER_NO_INTERACTION: 1
-
-      - name: Install Moodle + plugin (auto clone)
-        run: |
-          # Moodle установит ядро сам
+          # Устанавливаем Moodle и сам сабплагин
           moodle-plugin-ci install \
+            --plugin . \
             --db-type=${{ matrix.dbtype }} \
             --db-host=127.0.0.1 \
             --db-user=postgres \
             --db-pass=postgres \
             --db-name=moodle \
             --branch=${{ matrix.moodle-branch }}
-
-          # После установки Moodle — вручную добавляем зависимости
-          mkdir -p moodle/admin/tool
-          mkdir -p moodle/mod
-          cp -r .deps/moodle/admin/tool/certificate moodle/admin/tool/
-          cp -r .deps/moodle/mod/coursecertificate moodle/mod/
-
-          # Копируем сабплагин внутрь установленного Moodle
-          mkdir -p moodle/admin/tool/certificate/element/autonumber
-          rsync -av --exclude '.git' --exclude '.github' . moodle/admin/tool/certificate/element/autonumber/
-
-          # Обновляем Moodle и запускаем апгрейд
-          php moodle/admin/cli/upgrade.php --non-interactive --allow-unstable
         env:
           DB: ${{ matrix.dbtype }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: Lint PHP
-        run: moodle-plugin-ci phplint moodle/admin/tool/certificate/element/autonumber
+        run: moodle-plugin-ci phplint .
 
       - name: PHP CodeSniffer
-        run: moodle-plugin-ci phpcs --max-warnings 0 moodle/admin/tool/certificate/element/autonumber
+        run: moodle-plugin-ci phpcs --max-warnings 0 .
 
       - name: PHPDoc checker
-        run: moodle-plugin-ci phpdoc --max-warnings 0 moodle/admin/tool/certificate/element/autonumber
+        run: moodle-plugin-ci phpdoc --max-warnings 0 .
 
       - name: Validate plugin
-        run: moodle-plugin-ci validate moodle/admin/tool/certificate/element/autonumber
+        run: moodle-plugin-ci validate .
 
       - name: Savepoints
-        run: moodle-plugin-ci savepoints moodle/admin/tool/certificate/element/autonumber
+        run: moodle-plugin-ci savepoints .
 
       - name: Unit tests
-        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text
+        run: moodle-plugin-ci phpunit --fail-on-warning --coverage-text .
 
       - name: Package release (main branch only)
         if: github.ref == 'refs/heads/main' && success()
         run: |
-          cd moodle/admin/tool/certificate/element
-          zip -r ../../../certificateelement_autonumber.zip autonumber
+          zip -r certificateelement_autonumber.zip .
           TAG="v$(date +'%Y.%m.%d.%H%M')"
-          gh release create "$TAG" ../../../certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
+          gh release create "$TAG" certificateelement_autonumber.zip -t "Release $TAG" -n "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Cleanup temp deps
-        if: always()
-        run: rm -rf .deps
