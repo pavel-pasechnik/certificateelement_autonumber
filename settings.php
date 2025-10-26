@@ -73,5 +73,5 @@ if ($hassiteconfig) {
         $options
     ));
 
-    $ADMIN->add('tool_certificate', $settings);
+    $ADMIN->add('certificateelementplugins', $settings);
 }
