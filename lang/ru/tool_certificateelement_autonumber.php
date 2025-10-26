@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,3 +43,6 @@ $string['keep_plugin_data'] = 'Оставить все данные и наст�
 $string['execute_uninstall_action'] = 'Выполнить выбранное действие';
 $string['uninstallmode'] = 'Действие при удалении плагина';
 $string['uninstallmode_desc'] = 'Выберите, что делать с данными при удалении плагина AutoNumber.';
+$string['autonumber:recalculate'] = 'Пересчёт номеров сертификатов';
+$string['autonumber_settings'] = 'Настройки AutoNumber';
+$string['autonumber_settings_desc'] = 'Настройка автоматической нумерации сертификатов.';

@@ -27,17 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage(
         'certificateelement_autonumber',
-        get_string('pluginname', 'certificateelement_autonumber')
+        get_string('autonumber_settings', 'certificateelement_autonumber')
     );
 
-    // Setting the series mode selection.
+    // Series mode selection.
     $options = [
         'course' => get_string('series_course', 'certificateelement_autonumber'),
         'group' => get_string('series_group', 'certificateelement_autonumber'),
         'coursegroup' => get_string('series_coursegroup', 'certificateelement_autonumber'),
         'manual' => get_string('series_manual', 'certificateelement_autonumber'),
     ];
-
     $settings->add(new admin_setting_configselect(
         'certificateelement_autonumber/seriesmode',
         get_string('seriesmode', 'certificateelement_autonumber'),
@@ -46,7 +45,7 @@ if ($hassiteconfig) {
         $options
     ));
 
-    // Manual series setup.
+    // Manual series input.
     $settings->add(new admin_setting_configtext(
         'certificateelement_autonumber/manualseries',
         get_string('manualseries', 'certificateelement_autonumber'),
@@ -54,45 +53,25 @@ if ($hassiteconfig) {
         'SER'
     ));
 
-    // Check for the presence of the certificateelement/autonumber:manage right before adding the recalculation button.
-    $context = context_system::instance();
-    if (has_capability('certificateelement/autonumber:manage', $context)) {
-        $url = new moodle_url('/admin/tool/certificate/element/autonumber/recalculate.php');
-        $button = new single_button($url, get_string('recalculate_numbers', 'certificateelement_autonumber'), 'get');
-        $settings->add(new admin_setting_heading(
-            'certificateelement_autonumber_recalculate',
-            get_string('recalculate_numbers_heading', 'certificateelement_autonumber'),
-            $OUTPUT->render($button)
-        ));
-    }
+    // Recalculation info.
+    $settings->add(new admin_setting_heading(
+        'certificateelement_autonumber_recalculate',
+        get_string('recalculate_numbers_heading', 'certificateelement_autonumber'),
+        get_string('recalculate_numbers_desc', 'certificateelement_autonumber')
+    ));
 
-    // Add a choice of action when uninstalling the plugin.
-    if (has_capability('certificateelement/autonumber:manage', $context)) {
-        $options = [
-            'keep' => get_string('keep_plugin_data', 'certificateelement_autonumber'),
-            'delete' => get_string('delete_plugin_data', 'certificateelement_autonumber'),
-        ];
+    // Uninstall behavior.
+    $options = [
+        'keep' => get_string('keep_plugin_data', 'certificateelement_autonumber'),
+        'delete' => get_string('delete_plugin_data', 'certificateelement_autonumber'),
+    ];
+    $settings->add(new admin_setting_configselect(
+        'certificateelement_autonumber/uninstallmode',
+        get_string('uninstallmode', 'certificateelement_autonumber'),
+        get_string('uninstallmode_desc', 'certificateelement_autonumber'),
+        'keep',
+        $options
+    ));
 
-        $settings->add(new admin_setting_configselect(
-            'certificateelement_autonumber/uninstallmode',
-            get_string('uninstallmode', 'certificateelement_autonumber'),
-            get_string('uninstallmode_desc', 'certificateelement_autonumber'),
-            'keep',
-            $options
-        ));
-
-        $deleteurl = new moodle_url('/admin/tool/certificate/element/autonumber/uninstall.php');
-        $deletebutton = new single_button(
-            $deleteurl,
-            get_string('execute_uninstall_action', 'certificateelement_autonumber'),
-            'get'
-        );
-        $settings->add(new admin_setting_heading(
-            'certificateelement_autonumber_delete',
-            get_string('delete_plugin_data_heading', 'certificateelement_autonumber'),
-            $OUTPUT->render($deletebutton)
-        ));
-    }
-
-    $ADMIN->add('tools', $settings);
+    $ADMIN->add('tool_certificate', $settings);
 }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Certificate series and number';
+$string['pluginname'] = 'Certificate series & number';
 $string['autonumber_missing'] = 'Number not assigned';
 $string['seriesmode'] = 'Source of the series';
 $string['series_course'] = 'Course (short name)';
@@ -42,3 +42,8 @@ $string['keep_plugin_data'] = 'Keep all plugin data and settings';
 $string['execute_uninstall_action'] = 'Execute uninstall action';
 $string['uninstallmode'] = 'Action on plugin uninstall';
 $string['uninstallmode_desc'] = 'Select whether to keep or delete plugin data when uninstalling.';
+// Capability.
+$string['autonumber:recalculate'] = 'Recalculate certificate numbers';
+// Settings.
+$string['autonumber_settings'] = 'AutoNumber settings';
+$string['autonumber_settings_desc'] = 'Configure automatic numbering behavior for certificates.';
