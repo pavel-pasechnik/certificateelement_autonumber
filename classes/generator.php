@@ -38,10 +38,19 @@ class generator {
         $year = date('Y', $timecreated);
         $series = self::resolve_series($courseid, $userid);
 
-        $max = $DB->get_field_sql('
-            SELECT MAX(number)
-              FROM {certificateelement_autonumber}
-             WHERE year = ? AND series = ?', [$year, $series]);
+        $numberingmode = get_config('certificateelement_autonumber', 'numberingmode') ?: 'yearly';
+
+        if ($numberingmode === 'continuous') {
+            $max = $DB->get_field_sql('
+                SELECT MAX(number)
+                  FROM {certificateelement_autonumber}
+                 WHERE series = ?', [$series]);
+        } else {
+            $max = $DB->get_field_sql('
+                SELECT MAX(number)
+                  FROM {certificateelement_autonumber}
+                 WHERE year = ? AND series = ?', [$year, $series]);
+        }
 
         $newnumber = ((int)$max) + 1;
 

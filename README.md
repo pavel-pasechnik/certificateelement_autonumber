@@ -19,9 +19,10 @@ The **Certificate Element AutoNumber** plugin extends the official Moodle Workpl
 (`tool_certificate` and `mod_coursecertificate`) by adding **automatic series and sequential numbering**  
 to issued certificates.
 
-> ⚙️ **Dependency:** Requires the official Workplace plugins  
-> [`tool_certificate`](https://github.com/moodleworkplace/moodle-tool_certificate) and  
-> [`mod_coursecertificate`](https://github.com/moodleworkplace/moodle-mod_coursecertificate)
+> ⚙️ **Dependencies:**  
+> Requires the official Workplace plugins:
+> - [`tool_certificate`](https://github.com/moodleworkplace/moodle-tool_certificate/tree/MOODLE_400_STABLE) — version **v4.0.0**  
+> - [`mod_coursecertificate`](https://github.com/moodleworkplace/moodle-mod_coursecertificate/tree/MOODLE_400_STABLE) — version **v4.0.0**
 
 ---
 
